@@ -6,9 +6,10 @@ import type { DonationStatus } from '@/lib/types'
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const donation = getDonationById(params.id)
+  const { id } = await params
+  const donation = getDonationById(id)
   if (!donation) {
     return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 })
   }
@@ -19,9 +20,10 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params
     const body = (await req.json()) as {
       status?: DonationStatus
       volunteerName?: string
@@ -36,7 +38,7 @@ export async function PATCH(
     if (body.status === 'IN_TRANSIT') updates.matchedAt   = new Date()
     if (body.status === 'DELIVERED')  updates.deliveredAt = new Date()
 
-    const updated = updateDonation(params.id, updates)
+    const updated = updateDonation(id, updates)
     if (!updated) {
       return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 })
     }
