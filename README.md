@@ -1,414 +1,434 @@
 <div align="center">
 
+<img src="https://img.shields.io/badge/HackDays%202026-GCET%20%C3%97%20HackBase%20%C3%97%20MLH-0A66C2?style=for-the-badge&logo=hack-the-box&logoColor=white" />
+<img src="https://img.shields.io/badge/Theme-Best%20Use%20of%20Google%20Gemini%20API-4285F4?style=for-the-badge&logo=google&logoColor=white" />
+<img src="https://img.shields.io/badge/Round%201-PPT%20%2B%20Prototype-success?style=for-the-badge" />
+
+<br/><br/>
+
 # 🍱 ResQFood
 
-### *"Every plate saved is a life changed."*
+## *Rescuing Surplus Food with AI. Delivering Hope in Real-Time.*
 
-**Rescuing surplus food with AI. Delivering hope in real-time.**
+> **"The food exists. The people are hungry. The only thing missing is intelligence."**
 
----
+<br/>
 
-[![Hackathon](https://img.shields.io/badge/HackDays%202026-GCET-blue?style=for-the-badge)](https://unstop.com)
-[![Theme](https://img.shields.io/badge/Theme-Best%20Use%20of%20Gemini%20API-green?style=for-the-badge)](https://ai.google.dev)
-[![Powered by](https://img.shields.io/badge/Powered%20by-Google%20Gemini-orange?style=for-the-badge)](https://ai.google.dev)
-[![MLH](https://img.shields.io/badge/In%20collaboration%20with-MLH-red?style=for-the-badge)](https://mlh.io)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ResQFood-black?style=flat-square&logo=github)](https://github.com/Aayush9808/ResQFood)
+[![Powered by Gemini](https://img.shields.io/badge/Powered%20by-Google%20Gemini%201.5%20Pro-orange?style=flat-square&logo=google)](https://ai.google.dev)
+[![Platform](https://img.shields.io/badge/Platform-Web%20%2B%20Mobile-blueviolet?style=flat-square)]()
+[![Status](https://img.shields.io/badge/Status-Prototype%20Ready-brightgreen?style=flat-square)]()
 
 </div>
 
 ---
 
-## 🌍 The Reality We Can't Ignore
+## ⚡ TL;DR — Understand in 10 Seconds
 
-> **1.3 billion tonnes** of food is wasted globally every year.  
-> **80 crore people** go to bed hungry every night.  
-> **India alone** wastes food worth **₹92,000 crore annually** — enough to feed every hungry child in the country.
-
-The tragedy? **The food exists. The people exist. The bridge doesn't.**
-
-Hotels serve last-minute buffets. Corporate events over-order. Hostels cook excess. And by the time someone thinks to donate — it's too late, logistics fail, and perfectly edible food ends up in a landfill.
-
-**ResQFood is that bridge.**
+| | |
+|---|---|
+| **The Problem** | 1 in 3 meals cooked in India is wasted. 194 million Indians are undernourished. The gap is coordination — not food. |
+| **The Solution** | ResQFood connects surplus food donors to NGOs and volunteers — in real-time, using AI. |
+| **How It Works** | Donor speaks or photographs food → **Gemini AI** extracts data, predicts spoilage, matches the right NGO → Volunteer delivers |
+| **Why Gemini** | Multilingual voice input, image understanding, contextual spoilage reasoning, smart NGO matching — all in one API call |
+| **The Impact** | Every rescue feeds ~30–50 people and avoids ~5 kg of CO₂ emissions |
 
 ---
 
-## ❗ Problem Statement
+## 🌍 The Problem — By the Numbers
 
-### Why Current Solutions Fail
+<div align="center">
 
-| Gap | Reality |
-|-----|---------|
-| **No Real-Time Matching** | NGOs don't know what's available or where |
-| **Manual Coordination** | WhatsApp groups, phone calls — slow and unreliable |
-| **Food Spoilage** | No urgency detection means food rots before pickup |
-| **Volunteer Friction** | No smart routing; volunteers waste time and fuel |
-| **Language Barriers** | Donors (cooks, hostel staff) aren't always English-fluent |
-| **Data Blindness** | No insights to prevent over-cooking or over-ordering |
+| Stat | Source |
+|------|--------|
+| 🗑️ **1.3 billion tonnes** of food wasted globally every year | FAO, 2023 |
+| 🇮🇳 **68.7 million tonnes** of food wasted in India annually | UNEP Food Waste Index, 2024 |
+| 😔 **194 million people** undernourished in India | FAO State of Food Security, 2023 |
+| 💸 India's food waste costs **₹92,000 crore** per year | ASSOCHAM Report |
+| 🌡️ Food waste generates **8–10%** of global greenhouse gas emissions | UNEP, 2023 |
+| ⏱️ Cooked food becomes unsafe in **2–4 hours** without refrigeration | FSSAI Guidelines |
 
-> Existing apps like "No Food Waste" or "Too Good To Go" are either region-locked, paid, or lack the intelligence to coordinate at the speed food spoilage demands.
+</div>
 
-**The window to save food is often under 2 hours. Every second of coordination delay is food in the bin.**
+<br/>
+
+> 💬 **The cruelest irony:** A wedding hall throws away 40 kg of food while an orphanage 3 km away sends children to sleep hungry.
+>
+> This isn't a food shortage. **It's a coordination failure.**
+
+### Why Existing Solutions Fall Short
+
+| Solution | Type | Why It Fails |
+|---|---|---|
+| WhatsApp Groups | Manual alerts | Unstructured, slow, zero matching intelligence |
+| Too Good To Go | Commercial resale | Paid model, not donation-focused, not multilingual |
+| Generic Food Banks | Fixed-location collection | No real-time coordination, language barriers |
+| Manual NGO calls | Phone-based | Inconsistent, unscalable, time-consuming |
+| **ResQFood** ✅ | **AI-powered rescue** | **Solves all of the above** |
 
 ---
 
-## 💡 Solution: ResQFood
-
-**ResQFood** is an AI-powered food rescue platform that:
-
-1. **Accepts food listings from donors** via text, voice, or image
-2. **Uses Gemini API** to extract structured food data and predict spoilage urgency
-3. **Intelligently matches** the food to the most suitable NGO based on distance, need, and capacity
-4. **Dispatches volunteers** with optimized routes and real-time updates
-
-> Think of it as **Swiggy for surplus food** — but powered by Gemini, built for impact, and completely free for NGOs and donors.
-
----
-
-## 🧠 The Gemini API — The Brain of ResQFood
-
-> This isn't "we added a chatbot." Gemini is the **core reasoning engine** that makes ResQFood work where every other solution fails.
-
-### 1. 🗣️ Multimodal Food Intake (Text + Voice + Image)
-
-A hotel cook finishing a night shift doesn't want to fill forms. They speak in Hindi, snap a photo of leftover biryani, and that's it.
-
-**Gemini handles all three inputs simultaneously:**
+## 💡 The Solution — ResQFood
 
 ```
-Input (Voice - Hindi): "Aaj raat 40 plates biryani bachi hai, kal tak kharab ho jayegi"
-Input (Image): [Photo of food containers]
+📸  Donor snaps a photo or speaks in their language
+              ↓
+🧠  Gemini AI understands food, estimates urgency, matches NGO
+              ↓
+📲  NGO receives instant alert — accepts with one tap
+              ↓
+🚴  Nearest volunteer is GPS-routed to pick up and deliver
+              ↓
+📊  Impact logged: meals saved · CO₂ offset · donor streak updated
+```
 
-Gemini Output (Structured JSON):
+> 💬 **Think of it as Swiggy for surplus food** — powered by Gemini, built for impact, and completely free.
+
+---
+
+## 🧠 The Gemini API — The Brain, Not a Feature
+
+> Most teams say *"we used AI."*
+> We say: **without Gemini, ResQFood literally cannot function.**
+
+Here's exactly what Gemini does — concretely, not vaguely:
+
+---
+
+### 🔷 1. Multimodal Food Intake — Text + Voice + Image
+
+A tired hotel cook at 11 PM doesn't fill forms. They snap a photo and speak in Hindi.
+
+```
+INPUT  (Voice — Hindi):
+  "Aaj raat 40 plate biryani bachi hai, kal tak kharab ho jayegi"
+
+INPUT  (Image): [Photo of food containers on counter]
+
+GEMINI OUTPUT (structured JSON):
 {
-  "food_type": "Biryani",
-  "quantity": "40 plates (~8kg estimated)",
-  "language_detected": "Hindi",
-  "location_hint": "night shift suggests dinner leftovers",
-  "spoilage_window": "14-16 hours",
-  "urgency": "HIGH",
-  "dietary_tags": ["non-vegetarian", "rice-based"],
-  "allergen_flags": ["possible nuts"]
+  "food_name":         "Biryani",
+  "quantity":          "~40 plates (est. 8 kg)",
+  "language":          "Hindi",
+  "dietary_type":      "Non-vegetarian",
+  "storage":           "No refrigeration observed",
+  "time_since_cooked": "~2–3 hours",
+  "spoilage_window":   "12–14 hours",
+  "urgency":           "HIGH",
+  "allergen_flag":     "Possible nuts/traces"
 }
 ```
 
-**Why Gemini?** No other API handles noisy multilingual voice + image context simultaneously with this reasoning quality.
+**Why only Gemini?** No other API handles noisy multilingual voice + real-world food images + multi-step reasoning in a single, coherent call.
 
 ---
 
-### 2. ⏱️ Intelligent Spoilage Urgency Prediction
+### 🔷 2. Contextual Spoilage Urgency Prediction
 
-Gemini doesn't just read food data — it **reasons** about it.
+Gemini doesn't use a lookup table. It **reasons like a food safety expert.**
 
 ```
-Context given to Gemini:
-- Food: Paneer Curry
-- Current temperature: 28°C (from device sensor)
-- Time since cooked: 3 hours
-- Storage: No refrigeration
-- Season: Summer
+Context sent to Gemini:
+  → Food type: Paneer Curry (dairy + protein)
+  → Ambient temperature: 32°C (summer)
+  → Time since cooked: 3 hours
+  → Storage: Open vessel, no refrigeration
 
 Gemini Reasoning:
-"Dairy-based curry in 28°C ambient heat with no refrigeration 
-degrades rapidly. Safe consumption window: ~3-4 hours. 
-Urgency: CRITICAL. Recommend dispatch within 45 minutes."
+  "Dairy-based protein in 32°C summer heat degrades rapidly.
+   Per FSSAI safe-zone guidelines: max 4 hours unrefrigerated.
+   Remaining window: ~1 hour.
+   → URGENCY: CRITICAL. Dispatch within 30 minutes."
 ```
 
-This is **contextual judgment**, not just a lookup table — something only a large reasoning model like Gemini can provide.
+This is **contextual judgment under real-world constraints** — impossible with rule-based systems.
 
 ---
 
-### 3. 🎯 Smart NGO Matching Engine
+### 🔷 3. Intelligent Multi-Factor NGO Matching
 
-Traditional matching = nearest NGO. **ResQFood's matching = smartest NGO.**
-
-Gemini weighs multiple real-world factors:
+**Nearest NGO ≠ Best NGO.** Gemini decides which organization actually gets the food.
 
 ```
-Factors analyzed:
-- Distance (< 5km preferred)
-- NGO's current meal capacity (from their last update)
-- Food type alignment (some NGOs serve only vegetarian)
-- Volunteer availability at that NGO
-- Historical acceptance rate of this donor
-- Time-sensitivity of the food
+Factors Gemini evaluates simultaneously:
+  ✔  Distance (≤5 km preferred)
+  ✔  NGO's current stated capacity
+  ✔  Dietary compatibility (veg / non-veg)
+  ✔  Volunteer availability at that NGO
+  ✔  Historical pickup acceptance rate
+  ✔  Food quantity vs. NGO serving size
 
-Gemini Decision Output:
-"Recommend: Roti Bank (2.3km) — serves non-veg, 
-has volunteer on standby, historically accepts biryani,
-can serve 45+ people. Confidence: 94%"
+Gemini Match Output:
+  "Recommend: Roti Bank (2.3 km)
+   Reason: Serves non-veg, volunteer on standby,
+   historically accepts biryani, can serve 45+ people.
+   → Confidence: 94%"
 ```
 
 ---
 
-### 4. 🌐 Real-Time Multilingual Support
+### 🔷 4. Multilingual — 20+ Indian Languages, Zero Friction
 
-India has 22 official languages. Donors speak Kannada, Tamil, Bengali, Marathi. Gemini processes them all natively — no translation middleware, no data loss.
+India has 22 official languages. Gemini processes **Hindi, Tamil, Kannada, Bengali, Marathi, Telugu** natively — no translation middleware, no data loss.
 
-**This removes the single biggest barrier to food donation in Tier 2/3 cities.**
+> This removes the **single greatest adoption barrier** for food donation in Tier 2/3 cities.
 
 ---
 
-### 5. 📊 Weekly AI Insights for Donors
+### 🔷 5. Weekly AI Waste-Reduction Insights for Donors
 
-Gemini analyzes donation patterns to help reduce waste at the source:
+Gemini analyzes donation patterns to prevent surplus at the source:
 
-> *"Your hostel wastes most food on Mondays after morning assembly. Consider reducing dal preparation by ~20% on those days."*
+> *"Your hostel wastes most food on Monday evenings after assembly. Reducing dal preparation by 15–20% on that day could prevent ~4 kg of weekly waste."*
 
-This transforms ResQFood from a rescue app to a **waste prevention system**.
+ResQFood transforms from a rescue platform into a **waste prevention system.**
 
 ---
 
 ## ⚙️ System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         DONOR (Restaurant / Hostel / Event)     │
-│           [Text Input]   [Voice Input]   [Image Upload]         │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                   GEMINI API — Intake Layer                     │
-│  • Multimodal parsing (text + speech + vision)                  │
-│  • Language detection & translation                             │
-│  • Structured food data extraction                              │
-│  • Initial spoilage estimate                                    │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                   GEMINI API — Intelligence Layer               │
-│  • Spoilage urgency prediction (contextual reasoning)           │
-│  • NGO matching (multi-factor decision making)                  │
-│  • Route optimization recommendation for volunteers             │
-│  • Priority queue generation                                    │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │
-              ┌────────────────┼────────────────┐
-              ▼                ▼                ▼
-     ┌─────────────┐  ┌──────────────┐  ┌─────────────────┐
-     │  NGO PORTAL │  │  VOLUNTEER   │  │  DONOR DASHBOARD│
-     │  Dashboard  │  │  Mobile App  │  │  + AI Insights  │
-     └─────────────┘  └──────────────┘  └─────────────────┘
-              │                │                │
-              └────────────────┴────────────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │  REAL-TIME DELIVERY │
-                    │  Food Rescued ✅    │
-                    └─────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                         DONOR                                    │
+│       [Text Input]    [Voice / Hindi]    [Image Upload]          │
+└────────────────────────────┬─────────────────────────────────────┘
+                             │
+                             ▼
+┌──────────────────────────────────────────────────────────────────┐
+│              GEMINI API — INTAKE & INTELLIGENCE LAYER            │
+│                                                                  │
+│  ┌──────────────────────┐    ┌───────────────────────────────┐   │
+│  │  Multimodal Parser   │    │  Spoilage Urgency Predictor   │   │
+│  │  (text+voice+image)  │    │  (contextual AI reasoning)    │   │
+│  └──────────────────────┘    └───────────────────────────────┘   │
+│                                                                  │
+│  ┌──────────────────────┐    ┌───────────────────────────────┐   │
+│  │  NGO Matching Engine │    │  Multilingual Processor       │   │
+│  │  (multi-factor AI)   │    │  (20+ Indian languages)       │   │
+│  └──────────────────────┘    └───────────────────────────────┘   │
+└────────────────────────────┬─────────────────────────────────────┘
+                             │
+          ┌──────────────────┼──────────────────┐
+          ▼                  ▼                  ▼
+  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐
+  │  NGO PORTAL  │  │  VOLUNTEER   │  │ DONOR DASHBOARD │
+  │  Dashboard   │  │  Mobile App  │  │ + AI Insights   │
+  │  Accept/Deny │  │  GPS Routing │  │ Impact Reports  │
+  └──────┬───────┘  └──────┬───────┘  └─────────────────┘
+         │                 │
+         └────────┬────────┘
+                  ▼
+        ┌──────────────────────┐
+        │   FOOD RESCUED ✅    │
+        │   Impact Logged 📊   │
+        └──────────────────────┘
 ```
 
 ---
 
-## 🎬 Demo Flow
+## 🎬 Demo Flow — A Real Rescue in 5 Steps
 
-> *Walk through a real scenario in under 3 minutes.*
-
-**Scenario: Mehul's Dhaba has 30 extra plates of food after a wedding event.**
+> *Scenario: Mehul's Dhaba has 30 leftover plates after a wedding event. It's 10 PM.*
 
 ---
 
-**Step 1 — Donor lists surplus food** *(30 seconds)*
+**Step 1 — Donor Lists Food** `~30 seconds`
+
 ```
-Mehul opens ResQFood app → clicks "Donate Food"
-Speaks (in Hindi): "30 plate rajma chawal, hotel ke bahar ready hai"
-→ Gemini transcribes, translates, extracts structured data
-→ Urgency: HIGH (4-hour window)
+Mehul opens ResQFood → taps "Donate Food"
+Speaks (Hindi): "30 plate rajma chawal, hotel ke bahar ready hai"
+→ Gemini transcribes · translates · extracts structured data
+→ Spoilage window: 4 hours  |  Urgency: HIGH
 ```
 
-**Step 2 — AI analyzes and matches** *(2 seconds)*
+**Step 2 — AI Matches Best NGO** `2 seconds, automated`
+
 ```
-Gemini evaluates:
-→ 3 NGOs within 5km
-→ "Asha Foundation" matched (vegetarian-compatible, 40-person capacity, volunteer available)
-→ Confidence: 91%
+Gemini evaluates 3 nearby NGOs →
+  "Asha Foundation" selected:
+  ✔ 3.1 km away
+  ✔ Vegetarian-compatible
+  ✔ 40-person capacity available
+  ✔ Volunteer on standby
+  Confidence: 91%
 ```
 
-**Step 3 — NGO receives alert** *(instant)*
+**Step 3 — NGO Receives Alert** `instant push notification`
+
 ```
-Asha Foundation gets push notification:
-"30 plates Rajma Chawal available at Mehul's Dhaba — 3.1km away.
-Spoilage window: 4 hours. Accept / Decline"
-→ NGO coordinator taps ACCEPT
+Asha Foundation coordinator sees:
+  "30 plates Rajma Chawal at Mehul's Dhaba — 3.1 km
+   Spoilage window: 4 hrs  |  Pickup needed by: 2:00 AM
+   [Accept]   [Decline]"
+→ Taps ACCEPT
 ```
 
-**Step 4 — Volunteer dispatched** *(under 3 minutes)*
+**Step 4 — Volunteer Dispatched** `under 3 minutes`
+
 ```
-Nearest volunteer (Priya, 1.2km away) gets GPS-routed pickup task
-→ She picks up → delivers → marks complete
-→ Donor gets: "30 plates served to ~45 people. Thank you!"
+Nearest volunteer Priya (1.2 km away):
+→ GPS-routed pickup task sent to phone
+→ Picks up → delivers → marks "Delivered"
+→ Total elapsed time: 38 minutes
 ```
 
-**Step 5 — Impact logged** *(automated)*
+**Step 5 — Impact Logged** `automated`
+
 ```
 Platform records:
-→ 30 meals saved | 45 people fed | 6kg CO₂ offset
-→ Donor streak updated: "7 donations this month 🏅"
+  → 30 meals rescued
+  → ~45 people fed
+  → 6 kg CO₂ emissions avoided
+  → Donor streak: "8 donations this month"
+  → Mehul receives: "You fed 45 people tonight. Thank you."
 ```
 
 ---
 
 ## 🎯 Key Features
 
-| Feature | What Makes It Special |
-|---|---|
-| **Voice-First Donation** | Donors can list food by just speaking — no forms, no friction |
-| **Multilingual (20+ languages)** | Gemini handles Hindi, Tamil, Kannada, Bengali natively |
-| **Spoilage Clock** | Every listing shows a live countdown to unsafe consumption |
-| **Smart NGO Matching** | Gemini weighs 6+ factors — not just distance |
-| **Volunteer GPS Routing** | Optimized pickup paths to minimize food travel time |
-| **Donor Insights** | Weekly AI report: "You wasted 20% less this month" |
-| **Impact Dashboard** | Live stats: meals saved, people fed, CO₂ offset |
-| **NGO Capacity Tracker** | NGOs update capacity; Gemini avoids over-dispatching |
-| **Gamification for Donors** | Streaks, badges, leaderboards to build habit |
-| **Offline-Resilient** | Critical actions work on low connectivity (2G) |
+| Feature | What It Does | Why It Matters |
+|---|---|---|
+| 📣 **Voice-First Donation** | Donate by speaking in any language | Zero friction — no forms, no typing |
+| 🌐 **20+ Language Support** | Gemini processes regional Indian languages natively | Unlocks Tier 2/3 city participation |
+| ⏳ **Live Spoilage Timer** | Countdown on every food listing | Eliminates delays that cause waste |
+| 🎯 **Smart NGO Matching** | 6-factor Gemini decision engine | Right food goes to the right place |
+| 🗺️ **Volunteer GPS Routing** | Optimized pickup paths | Faster delivery, less fuel waste |
+| 📊 **AI Waste Insights** | Weekly Gemini pattern analysis | Prevents surplus before it happens |
+| 🏅 **Gamification** | Streaks, badges, leaderboards | Builds long-term donor habit |
+| 📡 **Low-Connectivity Mode** | Critical actions work on 2G | Accessible anywhere in India |
+| 🏢 **NGO Capacity Tracker** | NGOs update real-time availability | Prevents over-dispatch |
+| 📈 **Impact Dashboard** | Live meals saved + CO₂ offset | Accountability and motivation |
 
 ---
 
 ## 🌍 Real-World Impact
 
-### Who Benefits
+### Who Benefits — and How
 
 ```
-🍽️  DONORS          — Restaurants, hotels, hostels, event managers
-     ↳ Reduce waste guilt, get impact reports, build CSR credentials
+🍽️  DONORS  (Restaurants · Hotels · Hostels · Events)
+     → Eliminate waste guilt
+     → Earn verifiable CSR impact certificates
+     → Gemini tells them HOW to waste less going forward
 
-🏠  NGOs             — Orphanages, old-age homes, shelters, community kitchens  
-     ↳ Get free, quality food without cold-calling or searching
+🏠  NGOs  (Orphanages · Old-age homes · Shelters · Kitchens)
+     → Free, quality, AI-matched food — no cold-calling
+     → Real-time alerts with food details, quantity, and ETA
 
-🚴  VOLUNTEERS       — Students, delivery partners, local heroes
-     ↳ Earn recognition, certificates, referral letters
+🚴  VOLUNTEERS  (Students · Local heroes · Delivery partners)
+     → GPS-guided tasks, zero confusion
+     → Certificates, recognition, social impact credits
 
-🌱  ENVIRONMENT      — Every rescued meal = fewer landfill emissions
-     ↳ Estimated 2.5kg CO₂ saved per food rescue event
+🌱  ENVIRONMENT
+     → Every rescue: ~5 kg CO₂ avoided
+     → Measurable SDG 12 (Responsible Consumption) contribution
 ```
 
-### The Numbers That Matter
+### Impact at Scale
 
-- India has **7.5 lakh registered NGOs** — largely underfed
-- **40% of food** produced in India is wasted before consumption
-- **28% of children** under 5 in India are underweight
-- With even **1% of restaurant surplus** rescued daily across Delhi NCR = **2 lakh meals/month**
+| Deployment Scale | Estimated Meals Rescued / Month |
+|---|---|
+| 1 city (Delhi NCR), 500 donors | ~1.5 lakh meals |
+| 5 metro cities | ~7.5 lakh meals |
+| 50 cities across India | ~75 lakh meals |
+| National rollout (Tier 1 + Tier 2 cities) | **1 crore+ meals annually** |
+
+> **194 million undernourished Indians. Thousands of restaurants discarding food daily. ResQFood + Gemini closes the gap.**
 
 ---
 
-## 🧩 Innovation & Differentiation
+## 🧩 Why ResQFood Stands Out
 
-> *Why ResQFood wins where others fail.*
-
-**vs. WhatsApp coordination groups:**
-- Unstructured, slow, no matching intelligence, no spoilage awareness
-
-**vs. "Too Good To Go":**
-- Paid model, commercial focus, no NGO pipeline, not multilingual
-
-**vs. Generic food banks:**
-- Manual intake process, no real-time matching, no AI urgency detection
-
-### What Makes ResQFood Unique
-
-1. **Gemini is the coordinator** — not just a feature, but the operational core
-2. **Voice-first, language-agnostic** — works for a Tamil cook and a Bengali volunteer alike
-3. **Spoilage urgency as a first-class feature** — most apps ignore time-sensitivity entirely
-4. **Closes the loop** — donor → AI → NGO → volunteer → impact report, all automated
-5. **Designed for India's reality** — low-end devices, 2G networks, language diversity
+| Dimension | ResQFood | Other Tools |
+|---|---|---|
+| **AI Role** | Gemini is the operational core | Bolted-on chatbots |
+| **Language Support** | 20+ languages natively | English-only |
+| **Spoilage Intelligence** | Contextual reasoning per food type | Static timers or none |
+| **NGO Matching** | 6-factor AI decision | Nearest-distance only |
+| **Donor UX** | Speak → done in 30 seconds | Multi-step forms |
+| **Business Model** | Free for everyone | Paid or commercial |
+| **India-Readiness** | 2G support + regional languages | Metro-centric |
+| **Waste Prevention** | AI proactively reduces surplus | Purely reactive |
 
 ---
 
-## 🔮 Future Scope
+## 🔮 Future Roadmap
 
-### Phase 2 — Scale Within India (6 months)
-- Partner with **Zomato & Swiggy** for restaurant surplus data
-- Integrate with **FSSAI** food safety API for compliance
-- Launch **WhatsApp Bot** for donors who don't install apps
+```
+Phase 1  (Now – 3 months)    MVP: Gemini intake + matching + volunteer GPS routing
+Phase 2  (3–6 months)        Partner with Zomato/Swiggy restaurant data APIs
+Phase 3  (6–12 months)       Predictive surplus: Gemini warns BEFORE over-cooking
+Phase 4  (12–18 months)      Municipal Corporation API + FSSAI compliance integration
+Phase 5  (18–24 months)      Carbon credit generation for large recurring donors
+Phase 6  (2+ years)          Southeast Asia · Africa · Middle East expansion
+```
 
-### Phase 3 — Predictive Surplus (12 months)
-- Gemini analyzes historical data → **predicts surplus before it happens**
-- Hotels get alerts: *"Your Sunday brunch typically yields 40+ extra plates. Pre-schedule a pickup?"*
-- Reduces emergency last-minute scrambles
-
-### Phase 4 — Government Integration (18 months)
-- API for **Municipal Corporations** to track city-wide food waste
-- Integration with **PM Poshan scheme** for school meal optimization
-- **Carbon credit generation** for large donors (sustainability incentive)
-
-### Phase 5 — Global Expansion
-- Multilingual support already built in — deploy in Southeast Asia, Africa, Middle East
-- White-label for **UN World Food Programme** regional programs
-- Franchise model for city-level ResQFood coordinators
+> **The multilingual engine is already built-in. Going global requires zero architectural changes.**
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **AI Core** | Google Gemini 1.5 Pro (multimodal: text, voice, vision) |
-| **Frontend** | React Native (iOS + Android) + Next.js (Web Dashboard) |
-| **Backend** | Node.js + Express / FastAPI |
-| **Database** | Firebase Realtime DB + PostgreSQL |
-| **Maps & Routing** | Google Maps API + Distance Matrix API |
-| **Auth** | Firebase Auth (OTP-based for low-tech users) |
-| **Push Notifications** | Firebase Cloud Messaging |
-| **Hosting** | Google Cloud Platform |
-| **Storage** | Firebase Storage (food images) |
+| Layer | Technology | Role |
+|---|---|---|
+| **AI Core** | Google Gemini 1.5 Pro | Multimodal intake · spoilage prediction · NGO matching |
+| **Frontend** | React Native + Next.js | Mobile app + donor/NGO web dashboards |
+| **Backend** | Node.js / FastAPI | API gateway · real-time event handling |
+| **Database** | Firebase Realtime DB + PostgreSQL | Live updates + structured records |
+| **Maps** | Google Maps API + Distance Matrix | Routing · proximity search |
+| **Auth** | Firebase Auth (OTP-based) | Lightweight, no email required |
+| **Notifications** | Firebase Cloud Messaging | Instant NGO + volunteer alerts |
+| **Storage** | Firebase Storage | Food images |
+| **Hosting** | Google Cloud Platform | Scalable, same ecosystem as Gemini |
 
 ---
 
-## 📸 Screenshots & Demo
+## 📸 Screenshots
 
-> *[Replace placeholders below with actual screenshots from your prototype]*
+> *Replace placeholders with actual prototype screenshots before final submission*
 
-| Screen | Description |
+| Screen | File |
 |---|---|
-| `screenshots/01_home.png` | Landing screen with "Donate Food" CTA |
-| `screenshots/02_voice_input.png` | Voice recording interface with live Gemini transcription |
-| `screenshots/03_food_listing.png` | AI-extracted food card with spoilage timer |
-| `screenshots/04_ngo_match.png` | Smart matching result with Gemini reasoning |
-| `screenshots/05_volunteer_map.png` | Volunteer GPS routing screen |
-| `screenshots/06_impact_dashboard.png` | Donor's monthly impact report by Gemini |
+| 🏠 Home / Donate CTA | `screenshots/01_home.png` |
+| 🎙️ Voice Donation + Gemini Live Transcription | `screenshots/02_voice_input.png` |
+| 🍛 AI Food Card with Spoilage Timer | `screenshots/03_food_listing.png` |
+| 🎯 Gemini NGO Match Result | `screenshots/04_ngo_match.png` |
+| 🗺️ Volunteer GPS Routing View | `screenshots/05_volunteer_map.png` |
+| 📊 Gemini Weekly Waste Insights | `screenshots/06_donor_insights.png` |
 
 ---
 
-## 👥 Team
-
-> Built with purpose at **HackDays 2026** — GCET × HackBase × MLH
-
-| Name | Role |
-|---|---|
-| Aayush Kumar Shrivastav | Team Lead / Full Stack + AI Integration |
-| *(Teammate 2)* | *(Role)* |
-| *(Teammate 3)* | *(Role)* |
-| *(Teammate 4)* | *(Role)* |
-
----
-
-## 🧪 Setup & Run Locally
+## 🚀 Run Locally
 
 ```bash
-# Clone the repository
-git clone https://github.com/Aayush9808/Galgotiya_Hackathon.git
-cd Galgotiya_Hackathon
+# Clone
+git clone https://github.com/Aayush9808/ResQFood.git
+cd ResQFood
 
 # Install dependencies
 npm install
 
-# Add your environment variables
+# Configure environment
 cp .env.example .env
-# → Add your GEMINI_API_KEY, Firebase config, Google Maps API key
+# Fill in: GEMINI_API_KEY · Firebase config · GOOGLE_MAPS_API_KEY
 
-# Run development server
+# Start dev server
 npm run dev
 ```
 
 ---
 
-## 🌐 Live Demo
+## 👥 Team
 
-> 🔗 **[Try the Prototype →](#)** *(Link to be added)*  
-> 📊 **[View Presentation →](#)** *(PPT link to be added)*  
-> 🎥 **[Watch Demo Video →](#)** *(Demo video link to be added)*
+> Built at **HackDays 2026** — Galgotias College of Engineering & Technology
+
+| Name | Role |
+|---|---|
+| **Aayush Kumar Shrivastav** | Team Lead · Full Stack + Gemini AI Integration |
+| *(Teammate 2)* | *(Role)* |
+| *(Teammate 3)* | *(Role)* |
+| *(Teammate 4)* | *(Role)* |
 
 ---
 
@@ -416,14 +436,15 @@ npm run dev
 
 ---
 
-**"We don't have a food shortage. We have a coordination shortage."**
+> ### *"This is not just a platform. It's a lifeline."*
 
-**ResQFood fixes the coordination. Gemini makes it intelligent. Together, we fix hunger.**
+**194 million Indians are hungry. Tonnes of food are thrown away every single day.**  
+**ResQFood + Gemini is how we fix that — starting today.**
 
 ---
 
-*Built with ❤️ for HackDays 2026 | GCET × HackBase × MLH*
+*Built with purpose at HackDays 2026 · GCET × HackBase × MLH*
 
-[![GitHub](https://img.shields.io/badge/GitHub-Aayush9808-black?style=flat-square&logo=github)](https://github.com/Aayush9808)
+[![GitHub](https://img.shields.io/badge/GitHub-Aayush9808%2FResQFood-black?style=flat-square&logo=github)](https://github.com/Aayush9808/ResQFood)
 
 </div>
