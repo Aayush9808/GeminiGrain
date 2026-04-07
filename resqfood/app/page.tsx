@@ -1,567 +1,218 @@
 'use client'
 
-import { motion, useInView } from 'framer-motion'
-import { useRef, useEffect, useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import {
-  ArrowRight, Heart, Zap, Globe, Brain, MapPin, Clock,
-  CheckCircle, Users, Leaf, TrendingUp, ChevronDown,
-  Utensils, Building2, Bike,
-} from 'lucide-react'
+import { motion, useInView } from 'framer-motion'
+import { ArrowRight, Leaf, Brain, MapPin, Zap, CheckCircle } from 'lucide-react'
 import Navbar from '@/components/Navbar'
-import ImpactCounter from '@/components/ImpactCounter'
 
-// ── Animated number hook ──────────────────────────────────────────────────────
-function useAnimatedValue(to: number, delay = 0) {
-  const [val, setVal] = useState(0)
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true })
-
+function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
   useEffect(() => {
     if (!inView) return
-    const timer = setTimeout(() => {
-      const dur = 1600
-      const steps = 50
-      const inc = to / steps
-      let cur = 0
-      const id = setInterval(() => {
-        cur += inc
-        if (cur >= to) { setVal(to); clearInterval(id) }
-        else setVal(Math.floor(cur))
-      }, dur / steps)
-    }, delay)
-    return () => clearTimeout(timer)
-  }, [inView, to, delay])
-
-  return { val, ref }
+    const dur = 1800, start = Date.now()
+    const t = setInterval(() => {
+      const p = Math.min((Date.now()-start)/dur,1)
+      setCount(Math.floor((1-Math.pow(1-p,3))*target))
+      if(p>=1) clearInterval(t)
+    }, 16)
+    return () => clearInterval(t)
+  }, [inView, target])
+  return <span ref={ref}>{count.toLocaleString('en-IN')}{suffix}</span>
 }
 
-// ── Gemini demo steps ────────────────────────────────────────────────────────
-const DEMO_STEPS = [
-  { icon: '🔍', label: 'Detecting language…' },
-  { icon: '📝', label: 'Extracting food details…' },
-  { icon: '⏱️', label: 'Calculating spoilage window…' },
-  { icon: '🎯', label: 'Determining urgency level…' },
-  { icon: '🏥', label: 'Finding best NGO match…' },
-  { icon: '✅', label: 'Analysis complete!' },
-]
-
-function GeminiDemo() {
-  const [step, setStep]   = useState(-1)
-  const [done, setDone]   = useState(false)
-  const [input, setInput] = useState('')
-  const fullInput = 'Mere paas 40 logon ka khana hai, jaldi uthwana hai'
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true })
-
+function AIHeroCard() {
+  const [step, setStep] = useState(0)
+  const steps = [
+    { text: 'Analyzing: "40 plate biryani ready hai"', color: '#7C3AED', bg: '#F5F3FF' },
+    { text: 'Urgency detected: HIGH  3h window',       color: '#EA580C', bg: '#FFF7ED' },
+    { text: 'Scoring 4 nearby NGOs...',                color: '#2563EB', bg: '#EFF6FF' },
+    { text: 'Best match: Roti Bank  94% confidence',   color: '#16A34A', bg: '#F0FDF4' },
+  ]
   useEffect(() => {
-    if (!inView) return
-    // Type the input first
-    let i = 0
-    const typeId = setInterval(() => {
-      setInput(fullInput.slice(0, i + 1))
-      i++
-      if (i >= fullInput.length) clearInterval(typeId)
-    }, 40)
-  }, [inView])
-
-  useEffect(() => {
-    if (!inView || input.length < fullInput.length) return
-    const timeout = setTimeout(() => {
-      let s = 0
-      const id = setInterval(() => {
-        setStep(s)
-        s++
-        if (s >= DEMO_STEPS.length) {
-          clearInterval(id)
-          setTimeout(() => setDone(true), 400)
-        }
-      }, 480)
-    }, 600)
-    return () => clearTimeout(timeout)
-  }, [inView, input])
+    const id = setInterval(() => setStep(s => (s+1)%(steps.length+1)), 1700)
+    return () => clearInterval(id)
+  }, [steps.length])
 
   return (
-    <div ref={ref} className="rounded-2xl border border-violet-500/20 bg-[#0D1217] overflow-hidden">
-      {/* Terminal header */}
-      <div className="px-4 py-2.5 border-b border-violet-500/20 flex items-center gap-2 bg-[#0A0E12]">
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
+    <motion.div initial={{ opacity:0, y:24 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.3 }}
+      className="w-full max-w-[360px] bg-white rounded-3xl border border-gray-100 p-5 animate-float"
+      style={{ boxShadow:'0 20px 60px -12px rgba(0,0,0,0.15)' }}>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-9 h-9 rounded-xl bg-violet-100 flex items-center justify-center">
+          <Brain className="w-5 h-5 text-violet-600" />
         </div>
-        <span className="text-xs text-violet-400 ml-2 font-mono">gemini-1.5-flash · ResQFood AI</span>
-      </div>
-
-      <div className="p-5 space-y-4 font-mono text-sm">
-        {/* Input */}
         <div>
-          <div className="text-violet-400 text-xs mb-1.5">INPUT (Hindi)</div>
-          <div className="bg-[#131923] border border-violet-500/20 rounded-lg px-3 py-2.5 text-emerald-100 min-h-[40px]">
-            {input}<span className="cursor-blink text-violet-400 ml-0.5">|</span>
+          <p className="text-sm font-bold text-gray-900">Gemini 1.5 Flash</p>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-xs text-green-600 font-medium">Processing</span>
           </div>
         </div>
-
-        {/* Processing steps */}
-        {step >= 0 && (
-          <div className="space-y-1.5">
-            {DEMO_STEPS.slice(0, step + 1).map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                className={`flex items-center gap-2 text-xs ${i === step && !done ? 'text-violet-300' : 'text-emerald-600'}`}
-              >
-                <span>{s.icon}</span>
-                <span>{s.label}</span>
-                {(i < step || done) && <CheckCircle className="w-3 h-3 text-emerald-400 ml-auto" />}
-              </motion.div>
-            ))}
+        <div className="ml-auto text-[10px] font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">LIVE</div>
+      </div>
+      <div className="bg-gray-50 rounded-xl px-3.5 py-2.5 mb-4 font-mono text-xs text-gray-600 border border-gray-100">
+        "Mere paas 40 plate biryani hai, jaldi uthwa lo"
+      </div>
+      <div className="space-y-1.5">
+        {steps.map((s,i) => (
+          <div key={i} className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl transition-all duration-500"
+            style={i===step ? { background:s.bg } : { opacity: i<step ? 1 : 0.2 }}>
+            {i<step ? <CheckCircle className="w-4 h-4 text-green-500 shrink-0"/> :
+             i===step ? <div className="w-4 h-4 rounded-full border-2 shrink-0 animate-spin"
+               style={{ borderColor:s.color, borderTopColor:'transparent' }}/> :
+             <div className="w-4 h-4 rounded-full border border-gray-200 shrink-0"/>}
+            <span className="text-xs" style={{ color: i<=step ? (i<step?'#374151':s.color) : '#D1D5DB' }}>{s.text}</span>
           </div>
-        )}
-
-        {/* Output */}
-        {done && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3 space-y-1.5"
-          >
-            <div className="text-emerald-400 text-xs mb-2 font-semibold">GEMINI OUTPUT</div>
-            {[
-              ['Food',     'Biryani / Mixed Curry'],
-              ['Quantity', '40 plates (~10 kg)'],
-              ['Urgency',  'HIGH — 3h window'],
-              ['Language', 'Hindi detected'],
-              ['NGO Match','Roti Bank Delhi (91%)'],
-            ].map(([k, v]) => (
-              <div key={k} className="flex justify-between text-xs">
-                <span className="text-rq-muted">{k}</span>
-                <span className={k === 'Urgency' ? 'text-orange-400 font-medium' : k === 'NGO Match' ? 'text-emerald-400 font-medium' : 'text-emerald-100'}>{v}</span>
-              </div>
-            ))}
-          </motion.div>
-        )}
+        ))}
       </div>
-    </div>
-  )
-}
-
-// ── Floating urgency card ────────────────────────────────────────────────────
-function FloatingCard() {
-  return (
-    <motion.div
-      animate={{ y: [0, -10, 0] }}
-      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      className="rounded-xl border border-orange-500/30 bg-[#0F1A14]/90 backdrop-blur-sm p-4 w-64 shadow-xl shadow-orange-500/10"
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
-          <span className="text-xs font-semibold text-orange-400 uppercase tracking-wide">Urgent</span>
-        </div>
-        <span className="text-xs text-rq-muted">just now</span>
-      </div>
-      <p className="text-sm font-semibold text-emerald-50">Biryani • 40 plates</p>
-      <p className="text-xs text-rq-muted mt-0.5">Mehul's Dhaba, Noida</p>
-      <div className="mt-3 p-2 rounded-lg bg-emerald-500/10 border border-emerald-900/40">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-rq-muted">Gemini matched →</span>
-          <span className="text-emerald-400 font-medium">91%</span>
-        </div>
-        <p className="text-xs text-emerald-300 font-medium mt-0.5">Roti Bank Delhi</p>
-      </div>
-      <div className="flex items-center gap-1.5 mt-2.5 text-xs text-rq-muted">
-        <Clock className="w-3 h-3 text-orange-400" />
-        <span className="text-orange-400 font-medium">3h 12m left</span>
-      </div>
+      {step >= steps.length && (
+        <motion.div initial={{ opacity:0, y:6 }} animate={{ opacity:1, y:0 }}
+          className="mt-3 p-3 bg-green-50 rounded-xl border border-green-200 flex items-center justify-between">
+          <div>
+            <p className="text-xs font-bold text-green-800">Match confirmed!</p>
+            <p className="text-xs text-green-600 mt-0.5">Roti Bank  2.3 km  18 min pickup</p>
+          </div>
+          <div className="text-2xl font-black text-green-600">94%</div>
+        </motion.div>
+      )}
     </motion.div>
   )
 }
 
-// ── How it works steps ───────────────────────────────────────────────────────
-const HOW_STEPS = [
-  {
-    icon: Utensils,
-    color: 'emerald',
-    title: 'Donor Lists Food',
-    body: 'Speak, type, or photograph surplus food — in any language. Takes 30 seconds.',
-  },
-  {
-    icon: Brain,
-    color: 'violet',
-    title: 'Gemini Analyzes',
-    body: 'AI extracts food data, predicts urgency, and scores every nearby NGO instantly.',
-  },
-  {
-    icon: Building2,
-    color: 'emerald',
-    title: 'NGO Gets Alert',
-    body: 'Best-matched NGO receives a push notification with food details and ETA.',
-  },
-  {
-    icon: Bike,
-    color: 'orange',
-    title: 'Volunteer Delivers',
-    body: 'GPS-routed volunteer picks up and delivers. Impact logged automatically.',
-  },
+const STEPS = [
+  { n:'01', icon:Brain,   colorCls:'text-violet-600', bgCls:'bg-violet-50', title:'Speak to Gemini',    desc:'Describe food in Hindi or English. Gemini understands quantity, urgency, and dietary type instantly.' },
+  { n:'02', icon:MapPin,  colorCls:'text-green-600',  bgCls:'bg-green-50',  title:'AI Matches Instantly', desc:'Gemini calculates spoilage risk and location to find the perfect NGO within seconds.' },
+  { n:'03', icon:Zap,     colorCls:'text-orange-600', bgCls:'bg-orange-50', title:'Food is Rescued',    desc:'A nearby volunteer is dispatched. Track the entire journey live on the interactive map.' },
+]
+const ROLES = [
+  { role:'donor',     emoji:'🍱', label:'Food Donor',   desc:'Restaurants, events & households', hover:'hover:border-green-400 hover:bg-green-50'  },
+  { role:'ngo',       emoji:'🏥', label:'NGO Partner',  desc:'Shelters, orphanages, kitchens',   hover:'hover:border-amber-400 hover:bg-amber-50'  },
+  { role:'volunteer', emoji:'🛵', label:'Volunteer',    desc:'Help with pickup & delivery',      hover:'hover:border-orange-400 hover:bg-orange-50' },
 ]
 
-// ── Main landing page ────────────────────────────────────────────────────────
 export default function LandingPage() {
-  const statsRef = useRef<HTMLDivElement>(null)
-  const statsInView = useInView(statsRef, { once: true })
-
   return (
-    <div className="bg-mesh min-h-screen">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
-      {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center pt-20 pb-16 overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-violet-500/5 rounded-full blur-3xl" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left — copy */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-400 font-medium mb-6"
-              >
-                <Zap className="w-3 h-3" />
-                Powered by Google Gemini 1.5 Pro
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-tight"
-              >
-                Every plate{' '}
-                <span className="gradient-text">saved</span>
-                {' '}is a{' '}
-                <span className="gradient-text-orange">life</span>
-                {' '}changed.
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="mt-5 text-lg text-rq-muted max-w-xl leading-relaxed"
-              >
-                AI-powered food rescue connecting surplus from restaurants, hotels &
-                hostels with NGOs — in real-time, in any language.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="mt-8 flex flex-wrap gap-3"
-              >
-                <Link
-                  href="/auth"
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
-                >
-                  Start Donating <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  href="/auth"
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl border border-emerald-800 hover:border-emerald-600 text-emerald-300 font-medium transition-all duration-200 hover:-translate-y-0.5"
-                >
-                  Register as NGO
-                </Link>
-              </motion.div>
-
-              {/* Trust indicators */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-10 flex items-center gap-6 text-xs text-rq-muted"
-              >
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  Free for NGOs
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  20+ Indian languages
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  Works on 2G
-                </div>
-              </motion.div>
+      {/* Hero */}
+      <section className="pt-28 pb-24 px-4 overflow-hidden bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+          <motion.div initial={{ opacity:0, x:-20 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.5 }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold mb-6">
+              <Brain className="w-3.5 h-3.5" /> Powered by Google Gemini AI
             </div>
-
-            {/* Right — floating card + stats */}
-            <div className="relative flex flex-col items-center gap-6">
-              <FloatingCard />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 }}
-                className="grid grid-cols-2 gap-3 w-full max-w-xs"
-              >
-                {[
-                  { val: '194M', label: 'Undernourished in India', color: 'text-orange-400' },
-                  { val: '68.7M', label: 'Tonnes wasted annually', color: 'text-red-400' },
-                  { val: '30s',   label: 'To list surplus food',   color: 'text-emerald-400' },
-                  { val: '91%',   label: 'AI match confidence',    color: 'text-violet-400' },
-                ].map((s) => (
-                  <div key={s.label} className="p-3 rounded-xl border border-emerald-900/30 bg-[#0C1710] text-center">
-                    <div className={`text-xl font-bold ${s.color}`}>{s.val}</div>
-                    <div className="text-xs text-rq-muted mt-0.5 leading-tight">{s.label}</div>
-                  </div>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll hint */}
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-rq-muted"
-        >
-          <ChevronDown className="w-5 h-5" />
-        </motion.div>
-      </section>
-
-      {/* ── STATS BAR ────────────────────────────────────────────────────── */}
-      <div ref={statsRef} className="border-y border-emerald-900/30 bg-[#0C1710]/60 backdrop-blur-sm py-8">
-        <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {statsInView && (
-            <>
-              <ImpactCounter value={194}   suffix="M" label="Undernourished in India"       color="orange" />
-              <ImpactCounter value={68700} suffix="K" label="Tonnes Food Wasted / Year"     color="orange" />
-              <ImpactCounter value={92000} prefix="₹" label="Crore Lost Annually (India)"   color="white" />
-              <ImpactCounter value={45}               label="People Fed per Rescue Event"   color="green" />
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* ── HOW IT WORKS ─────────────────────────────────────────────────── */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <p className="text-xs text-emerald-600 uppercase tracking-widest mb-3 font-medium">The Flow</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-emerald-50">
-            Food rescued in <span className="gradient-text">under 5 minutes</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-          {/* Connector lines */}
-          <div className="hidden lg:block absolute top-10 left-[calc(12.5%+16px)] right-[calc(12.5%+16px)] h-px bg-emerald-900/40" />
-
-          {HOW_STEPS.map((step, i) => (
-            <motion.div
-              key={step.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="relative p-6 rounded-2xl border border-emerald-900/30 bg-[#0C1710] hover:border-emerald-800/60 transition-colors"
-            >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${
-                step.color === 'violet' ? 'bg-violet-500/15 text-violet-400' :
-                step.color === 'orange' ? 'bg-orange-500/15 text-orange-400' :
-                'bg-emerald-500/15 text-emerald-400'
-              }`}>
-                <step.icon className="w-5 h-5" />
-              </div>
-              <div className="absolute top-4 right-4 text-xl font-bold text-rq-subtle">
-                0{i + 1}
-              </div>
-              <h3 className="font-semibold text-emerald-50 mb-2">{step.title}</h3>
-              <p className="text-sm text-rq-muted leading-relaxed">{step.body}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── GEMINI SHOWCASE ───────────────────────────────────────────────── */}
-      <section className="py-24 px-4 bg-[#0C1710]/50 border-y border-emerald-900/20">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <p className="text-xs text-violet-400 uppercase tracking-widest mb-3 font-medium">Gemini API in Action</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-emerald-50 mb-5">
-              The AI that speaks{' '}
-              <span className="gradient-text-violet">every language</span>
-            </h2>
-            <div className="space-y-4 text-rq-muted text-sm leading-relaxed">
-              <p>
-                A hotel cook sends a Hindi voice note. A Tamil-speaking hostel manager
-                snaps a photo. An English-speaking event coordinator types a quick message.
-              </p>
-              <p>
-                Gemini understands all of it — extracting food type, quantity, spoilage
-                urgency, and dietary requirements — in a single API call.
-              </p>
-            </div>
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              {[
-                { label: 'Multilingual understanding', icon: Globe },
-                { label: 'Image + voice input', icon: Utensils },
-                { label: 'Contextual reasoning', icon: Brain },
-                { label: 'Smart NGO matching', icon: MapPin },
-              ].map(({ label, icon: Icon }) => (
-                <div key={label} className="flex items-center gap-2 text-xs text-emerald-300">
-                  <Icon className="w-4 h-4 text-violet-400 shrink-0" />
-                  {label}
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <GeminiDemo />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── ROLE CARDS ───────────────────────────────────────────────────── */}
-      <section className="py-24 px-4 max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl sm:text-4xl font-bold text-emerald-50">
-            Who are you?
-          </h2>
-          <p className="text-rq-muted mt-3">Choose your role to get started</p>
-        </motion.div>
-
-        <div className="grid sm:grid-cols-3 gap-5">
-          {[
-            {
-              role: 'donor',
-              icon: Utensils,
-              title: 'Food Donor',
-              desc: 'Restaurants, hotels, hostels & events with surplus food.',
-              color: 'emerald',
-              action: 'Start Donating',
-            },
-            {
-              role: 'ngo',
-              icon: Building2,
-              title: 'NGO Partner',
-              desc: 'Orphanages, shelters & community kitchens receiving food.',
-              color: 'violet',
-              action: 'Register NGO',
-            },
-            {
-              role: 'volunteer',
-              icon: Bike,
-              title: 'Volunteer',
-              desc: 'Students & local heroes who pick up and deliver food.',
-              color: 'orange',
-              action: 'Join as Volunteer',
-            },
-          ].map((card, i) => (
-            <motion.div
-              key={card.role}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Link href="/auth" className="block group">
-                <div className={`p-6 rounded-2xl border transition-all duration-200 cursor-pointer ${
-                  card.color === 'emerald' ? 'border-emerald-900/30 hover:border-emerald-500/40 hover:bg-emerald-500/5' :
-                  card.color === 'violet'  ? 'border-violet-900/30  hover:border-violet-500/40  hover:bg-violet-500/5' :
-                                             'border-orange-900/30  hover:border-orange-500/40  hover:bg-orange-500/5'
-                } bg-[#0C1710] hover:-translate-y-1`}>
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                    card.color === 'emerald' ? 'bg-emerald-500/15 text-emerald-400' :
-                    card.color === 'violet'  ? 'bg-violet-500/15  text-violet-400' :
-                                               'bg-orange-500/15  text-orange-400'
-                  }`}>
-                    <card.icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-semibold text-emerald-50 text-lg mb-2">{card.title}</h3>
-                  <p className="text-sm text-rq-muted leading-relaxed mb-4">{card.desc}</p>
-                  <div className={`flex items-center gap-1.5 text-sm font-medium group-hover:gap-2.5 transition-all ${
-                    card.color === 'emerald' ? 'text-emerald-400' :
-                    card.color === 'violet'  ? 'text-violet-400' :
-                                               'text-orange-400'
-                  }`}>
-                    {card.action} <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
+            <h1 className="text-5xl lg:text-[58px] font-black text-gray-950 leading-[1.04] tracking-tight mb-5">
+              Bridging the Gap<br/>Between Food<br/>
+              <span className="gradient-text">Waste &amp; Hunger</span>
+            </h1>
+            <p className="text-lg text-gray-500 leading-relaxed mb-8 max-w-[440px]">
+              194 million Indians sleep hungry while 40% of food is wasted.
+              ResQFood AI bridges this gap — intelligently, in real time.
+            </p>
+            <div className="flex flex-wrap gap-3 mb-8">
+              <Link href="/auth" className="flex items-center gap-2 px-6 py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl transition-all hover:-translate-y-0.5 text-sm"
+                style={{ boxShadow:'0 4px 16px rgba(22,163,74,0.3)' }}>
+                Donate Food Now <ArrowRight className="w-4 h-4"/>
               </Link>
-            </motion.div>
+              <Link href="/live" className="flex items-center gap-2 px-6 py-3.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 font-semibold rounded-2xl transition-colors text-sm">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"/> Live Feed
+              </Link>
+            </div>
+            <p className="text-sm text-gray-400 flex items-center gap-4">
+              <span className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-green-500"/> Free forever</span>
+              <span className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-green-500"/> Works in Hindi</span>
+              <span className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-green-500"/> No sign-up</span>
+            </p>
+          </motion.div>
+          <div className="flex justify-center lg:justify-end"><AIHeroCard /></div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="bg-green-600 py-10 px-4">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          {[{v:12847,s:'+',l:'Meals Rescued'},{v:342,s:'kg',l:'CO2 Avoided'},{v:34,s:'',l:'NGOs Online'},{v:98,s:'%',l:'Match Success'}].map(({v,s,l}) => (
+            <div key={l}><div className="text-3xl font-black text-white"><Counter target={v} suffix={s}/></div><div className="text-green-200 text-sm mt-1">{l}</div></div>
           ))}
         </div>
       </section>
 
-      {/* ── LIVE COUNTER ─────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 text-center border-t border-emerald-900/20">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
-          <p className="text-rq-muted text-sm mb-2">Today, ResQFood has helped rescue</p>
-          <div className="text-5xl sm:text-6xl font-bold gradient-text tabular-nums">
-            1,284
+      {/* How it works */}
+      <section className="py-24 px-4 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl font-black text-gray-900 mb-3">Three Steps. Zero Waste.</h2>
+            <p className="text-gray-500 text-sm max-w-sm mx-auto leading-relaxed">From surplus food to hungry mouths — all driven by Gemini AI</p>
           </div>
-          <p className="text-rq-muted text-sm mt-2">meals that would have been thrown away</p>
-        </motion.div>
-
-        <motion.blockquote
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="mt-12 max-w-2xl mx-auto text-xl sm:text-2xl text-emerald-100 font-medium leading-relaxed"
-        >
-          "This is not just reducing waste.{' '}
-          <span className="gradient-text-orange font-bold">This is saving lives.</span>"
-        </motion.blockquote>
+          <div className="grid md:grid-cols-3 gap-6">
+            {STEPS.map(({n,icon:Icon,colorCls,bgCls,title,desc},i) => (
+              <motion.div key={n} initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:i*0.1}}
+                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-card">
+                <div className={`w-11 h-11 rounded-xl ${bgCls} flex items-center justify-center mb-4`}>
+                  <Icon className={`w-5 h-5 ${colorCls}`}/>
+                </div>
+                <div className="text-xs font-mono font-semibold text-gray-400 mb-2">STEP {n}</div>
+                <h3 className="font-bold text-gray-900 mb-2 text-base">{title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer className="border-t border-emerald-900/20 py-10 px-4">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* Roles */}
+      <section className="py-24 px-4">
+        <div className="max-w-4xl mx-auto text-center mb-12">
+          <h2 className="text-3xl font-black text-gray-900 mb-3">Who Is It For?</h2>
+          <p className="text-gray-500 text-sm">Three roles, one platform, one mission.</p>
+        </div>
+        <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-5">
+          {ROLES.map(({role,emoji,label,desc,hover}) => (
+            <Link key={role} href={`/auth?role=${role}`}
+              className={`group bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-card transition-all duration-200 card-hover ${hover}`}>
+              <div className="text-4xl mb-4">{emoji}</div>
+              <h3 className="font-bold text-gray-900 mb-1 text-base">{label}</h3>
+              <p className="text-sm text-gray-500 mb-4 leading-relaxed">{desc}</p>
+              <div className="flex items-center gap-1 text-sm font-semibold text-green-600 group-hover:gap-2 transition-all">
+                Get Started <ArrowRight className="w-3.5 h-3.5"/>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 px-4 bg-gray-950 text-center">
+        <div className="max-w-xl mx-auto">
+          <div className="text-5xl mb-5">🍱</div>
+          <h2 className="text-4xl font-black text-white mb-4 leading-tight">
+            Food is going to waste<br/><span className="gradient-text">right now.</span>
+          </h2>
+          <p className="text-gray-400 mb-8 text-sm leading-relaxed">Join 500+ donors rescuing food in your city.</p>
+          <Link href="/auth" className="inline-flex items-center gap-2 px-8 py-4 bg-green-500 hover:bg-green-400 text-white font-bold rounded-2xl transition-all hover:-translate-y-0.5 text-sm"
+            style={{ boxShadow:'0 4px 20px rgba(74,222,128,0.35)' }}>
+            Start Rescuing Food →
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-100 py-8 px-4">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
-              <Heart className="w-3.5 h-3.5 text-white" fill="white" />
+            <div className="w-6 h-6 bg-green-600 rounded-md flex items-center justify-center">
+              <Leaf className="w-3.5 h-3.5 text-white"/>
             </div>
-            <span className="font-semibold text-emerald-50">ResQ<span className="text-emerald-400">Food</span></span>
+            <span className="font-bold text-sm text-gray-800">ResQ<span className="text-green-600">Food</span></span>
           </div>
-          <p className="text-xs text-rq-muted text-center">
-            Built for HackDays 2026 · GCET × HackBase × MLH · Powered by Google Gemini API
-          </p>
-          <div className="flex items-center gap-1.5 text-xs text-emerald-600">
-            <Heart className="w-3 h-3 fill-emerald-600" />
-            <span>Open source · MIT</span>
+          <p className="text-xs text-gray-400">Built for HackDays 2026  GCET x HackBase x MLH  Powered by Google Gemini AI</p>
+          <div className="flex items-center gap-4 text-xs text-gray-400">
+            <Link href="/live" className="hover:text-gray-700">Live Feed</Link>
+            <Link href="/auth" className="hover:text-gray-700">Get Started</Link>
           </div>
         </div>
       </footer>

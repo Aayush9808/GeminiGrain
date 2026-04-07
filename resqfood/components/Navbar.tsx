@@ -1,155 +1,125 @@
 'use client'
 
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Heart, LogOut, Menu, X, Zap } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { cn } from '@/lib/utils'
-import type { UserRole } from '@/lib/types'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { Leaf, Menu, X, LogOut, Activity } from 'lucide-react'
 
-const roleLabel: Record<UserRole, string> = {
-  donor:     'Food Donor',
-  ngo:       'NGO Partner',
-  volunteer: 'Volunteer',
-}
+const NAV_LINKS = [
+  { href: '/live',   label: 'Live Feed' },
+]
 
-const roleColor: Record<UserRole, string> = {
-  donor:     'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
-  ngo:       'text-violet-400  bg-violet-500/10  border-violet-500/30',
-  volunteer: 'text-orange-400  bg-orange-500/10  border-orange-500/30',
-}
-
-const roleHome: Record<UserRole, string> = {
-  donor:     '/donor',
-  ngo:       '/ngo',
-  volunteer: '/volunteer',
+const ROLE_BADGES: Record<string, { label: string; color: string; href: string }> = {
+  donor:     { label: 'Donor',     color: 'bg-green-100 text-green-700',   href: '/donor' },
+  ngo:       { label: 'NGO',       color: 'bg-amber-100 text-amber-700',   href: '/ngo' },
+  volunteer: { label: 'Volunteer', color: 'bg-orange-100 text-orange-700', href: '/volunteer' },
 }
 
 export default function Navbar() {
-  const router     = useRouter()
-  const [role, setRole] = useState<UserRole | null>(null)
-  const [open, setOpen] = useState(false)
+  const [role, setRole]       = useState<string | null>(null)
+  const [name, setName]       = useState<string | null>(null)
+  const [open, setOpen]       = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
+  const router   = useRouter()
 
   useEffect(() => {
-    const stored = localStorage.getItem('rq_role') as UserRole | null
-    setRole(stored)
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    setRole(localStorage.getItem('rq_role'))
+    setName(localStorage.getItem('rq_name'))
+    const onScroll = () => setScrolled(window.scrollY > 8)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [pathname])
 
-  function signOut() {
+  function logout() {
     localStorage.removeItem('rq_role')
-    router.push('/')
+    localStorage.removeItem('rq_name')
+    router.push('/auth')
   }
 
+  const badge = role ? ROLE_BADGES[role] : null
+
   return (
-    <nav
-      className={cn(
-        'fixed top-0 inset-x-0 z-50 transition-all duration-300',
-        scrolled
-          ? 'bg-[#060C09]/90 backdrop-blur-md border-b border-emerald-900/30 py-3'
-          : 'bg-transparent py-5',
-      )}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
+      scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100' : 'bg-white border-b border-gray-100'
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <Heart className="w-4 h-4 text-white" fill="white" />
+        <Link href="/" className="flex items-center gap-2 shrink-0">
+          <div className="w-8 h-8 bg-green-600 rounded-xl flex items-center justify-center shadow-green">
+            <Leaf className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-lg text-emerald-50 tracking-tight">
-            ResQ<span className="text-emerald-400">Food</span>
+          <span className="font-bold text-gray-900 text-[15px] tracking-tight">
+            ResQ<span className="text-green-600">Food</span>
           </span>
         </Link>
 
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-6">
-          {role && (
-            <>
-              <Link
-                href={roleHome[role]}
-                className="text-sm text-rq-muted hover:text-emerald-300 transition-colors"
-              >
-                Dashboard
-              </Link>
-              {role === 'donor' && (
-                <Link
-                  href="/donor/submit"
-                  className="text-sm text-rq-muted hover:text-emerald-300 transition-colors"
-                >
-                  Donate Food
-                </Link>
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-6 flex-1 justify-center">
+          {NAV_LINKS.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                pathname === href ? 'text-green-600' : 'text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              {href === '/live' && (
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               )}
-              <Link
-                href="/live"
-                className="text-sm text-rq-muted hover:text-emerald-300 transition-colors flex items-center gap-1"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Live Feed
-              </Link>
-            </>
-          )}
+              {label}
+            </Link>
+          ))}
         </div>
 
         {/* Right side */}
         <div className="hidden md:flex items-center gap-3">
-          {role ? (
+          {badge && role ? (
             <>
-              <span className={cn('text-xs px-2.5 py-1 rounded-full border font-medium', roleColor[role])}>
-                {roleLabel[role]}
-              </span>
-              <button
-                onClick={signOut}
-                className="flex items-center gap-1.5 text-sm text-rq-muted hover:text-red-400 transition-colors"
-              >
+              <Link href={badge.href} className={`text-xs font-semibold px-3 py-1.5 rounded-full ${badge.color}`}>
+                {name ?? badge.label}
+              </Link>
+              {role === 'donor' && (
+                <Link href="/donor/submit" className="btn btn-primary text-xs px-3 py-2">
+                  + Donate Food
+                </Link>
+              )}
+              <button onClick={logout} className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
                 <LogOut className="w-4 h-4" />
-                Sign out
               </button>
             </>
           ) : (
-            <>
-              <Link
-                href="/auth"
-                className="text-sm text-rq-muted hover:text-emerald-300 transition-colors"
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/auth"
-                className="flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white transition-colors shadow-lg shadow-emerald-500/20"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                Get Started
-              </Link>
-            </>
+            <Link href="/auth" className="text-sm font-semibold px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors shadow-green">
+              Get Started
+            </Link>
           )}
         </div>
 
-        {/* Mobile menu toggle */}
-        <button
-          className="md:hidden text-rq-muted p-1"
-          onClick={() => setOpen(!open)}
-        >
+        {/* Mobile burger */}
+        <button onClick={() => setOpen(!open)} className="md:hidden p-2 rounded-xl hover:bg-gray-100">
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-[#0C1710] border-t border-emerald-900/30 px-4 py-4 flex flex-col gap-3">
-          {role ? (
-            <>
-              <Link href={roleHome[role]} className="text-sm text-emerald-100 py-2" onClick={() => setOpen(false)}>Dashboard</Link>
-              {role === 'donor' && (
-                <Link href="/donor/submit" className="text-sm text-emerald-100 py-2" onClick={() => setOpen(false)}>Donate Food</Link>
-              )}
-              <Link href="/live" className="text-sm text-emerald-100 py-2" onClick={() => setOpen(false)}>Live Feed</Link>
-              <button onClick={signOut} className="text-sm text-red-400 text-left py-2">Sign out</button>
-            </>
-          ) : (
-            <Link href="/auth" className="text-sm text-emerald-300 py-2" onClick={() => setOpen(false)}>Get Started →</Link>
+        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-2">
+          {NAV_LINKS.map(({ href, label }) => (
+            <Link key={href} href={href} onClick={() => setOpen(false)}
+              className="block py-2.5 text-sm font-medium text-gray-700 hover:text-green-600">
+              {label}
+            </Link>
+          ))}
+          {!role && (
+            <Link href="/auth" onClick={() => setOpen(false)}
+              className="block w-full text-center py-2.5 bg-green-600 text-white text-sm font-semibold rounded-xl mt-2">
+              Get Started
+            </Link>
+          )}
+          {role && (
+            <button onClick={logout} className="block w-full text-left py-2.5 text-sm text-red-500">
+              Sign Out
+            </button>
           )}
         </div>
       )}

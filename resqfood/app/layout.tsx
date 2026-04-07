@@ -3,33 +3,28 @@ import './globals.css'
 import { Toaster } from 'react-hot-toast'
 
 export const metadata: Metadata = {
-  title: 'ResQFood — Rescue Surplus Food with AI',
-  description:
-    'AI-powered food rescue platform connecting surplus food donors with NGOs in real-time using Google Gemini API.',
-  keywords: 'food rescue, AI, Gemini, NGO, food waste, sustainability',
+  title: 'ResQFood — AI Food Rescue Platform',
+  description: 'Bridging the gap between food waste and hunger using Google Gemini AI',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className="bg-[#060C09] text-emerald-50 antialiased min-h-screen">
+    <html lang="en">
+      <body className="bg-rq-bg text-rq-text antialiased">
         {children}
         <Toaster
           position="top-right"
           toastOptions={{
             style: {
-              background: '#0C1710',
-              color: '#F0FDF4',
-              border: '1px solid rgba(34,197,94,0.2)',
-              borderRadius: '10px',
+              background: '#fff',
+              color: '#111827',
+              border: '1px solid #E5E7EB',
+              borderRadius: '12px',
               fontSize: '14px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
             },
-            success: {
-              iconTheme: { primary: '#22C55E', secondary: '#060C09' },
-            },
-            error: {
-              iconTheme: { primary: '#F87171', secondary: '#060C09' },
-            },
+            success: { iconTheme: { primary: '#16A34A', secondary: '#fff' } },
+            error:   { iconTheme: { primary: '#DC2626', secondary: '#fff' } },
           }}
         />
       </body>
