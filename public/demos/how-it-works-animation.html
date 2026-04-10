@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeminiGrain - How It Works</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #F5F3EE;
+      --silhouette: #1B4332;
+      --orange: #F5A623;
+      --green: #2DBD6E;
+      --text: #1A1A1A;
+      --muted: #626262;
+      --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      color: var(--text);
+      background: #ffffff;
+    }
+
+    .section {
+      width: 100%;
+      background: var(--cream);
+      padding: 90px 24px;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .world-map {
+      position: absolute;
+      inset: 0;
+      opacity: 0.06;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 600'%3E%3Cg fill='%23000000'%3E%3Cpath d='M70 240c70-66 160-74 254-52 52 12 95 43 157 43 50 0 78-39 125-56 66-24 122-9 168 43 33 36 45 80 37 128-12 62-48 98-104 123-46 21-97 26-147 26-66 0-126-15-181-51-36-24-64-58-111-67-66-12-133 33-191 0-39-22-56-58-58-101-3-53 17-101 51-136z'/%3E%3Cpath d='M640 172c86-56 168-60 257-42 63 13 122 45 187 46 51 2 101-20 150-33 75-21 148-18 218 20 54 29 94 72 110 133 20 71 2 136-47 190-57 63-132 86-214 94-95 9-186-3-278-29-74-20-143-53-218-69-73-15-142-8-211 29-53 28-102 71-168 51-47-14-69-51-70-99-2-70 30-130 73-183 54-68 129-83 211-108z'/%3E%3Cpath d='M1075 437c45-36 100-58 159-53 52 4 100 27 126 75 24 45 19 99-11 141-39 54-104 80-170 88-81 10-174-9-228-74-47-58-30-126 35-177 27-21 59-35 89-52z'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+    }
+
+    .dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    .dot.orange { background: var(--orange); }
+    .dot.green { background: var(--green); }
+
+    .dot.d1 { top: 70px; left: 80px; }
+    .dot.d2 { top: 104px; left: 116px; }
+    .dot.d3 { top: 86px; right: 134px; }
+    .dot.d4 { bottom: 86px; left: 17%; }
+    .dot.d5 { bottom: 74px; right: 13%; }
+
+    .container {
+      max-width: 1250px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .label {
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--orange);
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .heading {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1.12;
+      color: var(--text);
+      margin-bottom: 58px;
+    }
+
+    .flow-shell {
+      position: relative;
+      padding-top: 18px;
+    }
+
+    .desktop-connectors {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 122px;
+      height: 140px;
+      pointer-events: none;
+      z-index: 1;
+      display: block;
+    }
+
+    .desktop-connectors svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .connector-path {
+      fill: none;
+      stroke: var(--green);
+      stroke-width: 4;
+      stroke-linecap: round;
+      marker-end: url(#arrowhead);
+      stroke-dasharray: 320;
+      stroke-dashoffset: 320;
+      transition: stroke-dashoffset 0.8s ease-in-out;
+    }
+
+    .connector-path.draw {
+      stroke-dashoffset: 0;
+      animation: connectorPulse 1.2s ease-in-out 0.8s 1;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .step-card {
+      width: 100%;
+      background: #f9f6f0;
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      padding: 24px 20px 22px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      position: relative;
+      overflow: hidden;
+      min-height: 372px;
+    }
+
+    .step-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step-badge {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 14px;
+      border-radius: 999px;
+      background: var(--orange);
+      color: #fff;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Inter, sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+    }
+
+    .silhouette-zone {
+      height: 128px;
+      margin-bottom: 12px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .silhouette-zone svg {
+      width: 140px;
+      height: 120px;
+      overflow: visible;
+    }
+
+    .step-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      line-height: 1.08;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      min-height: 58px;
+    }
+
+    .accent-icon {
+      font-size: 18px;
+      line-height: 1;
+      margin-bottom: 10px;
+      color: var(--orange);
+    }
+
+    .step-desc {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted);
+      max-width: 230px;
+      margin: 0 auto;
+    }
+
+    .mobile-connector {
+      width: 48px;
+      height: 48px;
+      margin: 8px 0;
+      display: none;
+    }
+
+    .mobile-connector path {
+      fill: none;
+      stroke: var(--green);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 130;
+      stroke-dashoffset: 130;
+      transition: stroke-dashoffset 0.8s ease-in-out;
+    }
+
+    .mobile-connector.draw path {
+      stroke-dashoffset: 0;
+    }
+
+    /* Step 1 */
+    .step-card.play .step1-main {
+      animation: walkIn 0.6s ease-out both;
+    }
+
+    .step-card.play .step1-tray {
+      animation: glowPulse 1.5s infinite alternate 0.6s;
+    }
+
+    .step-card.play .step1-phone {
+      animation: phoneTap 0.7s ease-in-out 0.8s infinite;
+    }
+
+    .step-card.play .step1-phone-screen {
+      animation: screenBlink 0.6s ease-in-out 0.85s infinite;
+    }
+
+    /* Step 2 */
+    .step-card.play .step2-main {
+      animation: ngoBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .step-card.play .step2-bell {
+      animation: bellShake 1s ease-in-out 0.35s 2;
+      transform-origin: 104px 15px;
+    }
+
+    .step-card.play .step2-check {
+      animation: checkPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.55s both;
+    }
+
+    .step-card.play .step2-box {
+      animation: boxFlash 0.8s ease-in-out 0.55s 1;
+    }
+
+    /* Step 3 */
+    .step-card.play .step3-main {
+      animation: runIn 0.6s ease-out both;
+    }
+
+    .step-card.play .step3-pin {
+      animation: pinDrop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s both;
+    }
+
+    .step-card.play .step3-pin-pulse {
+      animation: pinPulse 1.2s ease-out 0.8s infinite;
+      transform-origin: 105px 36px;
+    }
+
+    .step-card.play .step3-path {
+      stroke-dasharray: 120;
+      stroke-dashoffset: 120;
+      animation: pathDraw 0.8s ease-in-out 0.55s forwards;
+    }
+
+    .step-card.play .step3-bag {
+      animation: bagBounce 0.8s ease-in-out 0.9s infinite;
+    }
+
+    .step-card.play .step3-bowl {
+      animation: bowlTilt 1.2s ease-in-out 1s infinite;
+      transform-origin: 112px 90px;
+    }
+
+    /* Step 4 */
+    .step-card .member {
+      opacity: 0;
+    }
+
+    .step-card.play .member.member-1 {
+      animation: fadeMember 0.4s ease-out 0.2s both;
+    }
+
+    .step-card.play .member.member-2 {
+      animation: fadeMember 0.4s ease-out 0.5s both;
+    }
+
+    .step-card.play .member.member-3 {
+      animation: fadeMember 0.4s ease-out 0.8s both;
+    }
+
+    .step-card.play .step4-box {
+      animation: foodGlow 1.5s infinite alternate 0.95s;
+    }
+
+    .hearts {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .heart {
+      position: absolute;
+      color: var(--orange);
+      font-size: 16px;
+      opacity: 0;
+    }
+
+    .step-card.play .heart.h1 {
+      left: 24%;
+      top: 62%;
+      animation: floatHeart 2s ease-in-out 1s infinite;
+    }
+
+    .step-card.play .heart.h2 {
+      left: 52%;
+      top: 58%;
+      animation: floatHeart 2s ease-in-out 1.35s infinite;
+    }
+
+    .step-card.play .heart.h3 {
+      left: 74%;
+      top: 64%;
+      animation: floatHeart 2s ease-in-out 1.7s infinite;
+    }
+
+    .confetti {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .piece {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 1px;
+      opacity: 0;
+    }
+
+    .piece.o { background: var(--orange); }
+    .piece.g { background: var(--green); }
+
+    .step-card.play .piece {
+      animation: confettiBurst 1s ease-out 1.05s both;
+    }
+
+    .piece.p1 { left: 34%; top: 40%; --tx: -26px; --ty: -42px; }
+    .piece.p2 { left: 44%; top: 36%; --tx: 18px; --ty: -40px; }
+    .piece.p3 { left: 54%; top: 39%; --tx: 28px; --ty: -26px; }
+    .piece.p4 { left: 62%; top: 45%; --tx: 32px; --ty: 12px; }
+    .piece.p5 { left: 40%; top: 47%; --tx: -22px; --ty: 18px; }
+    .piece.p6 { left: 50%; top: 42%; --tx: 0px; --ty: 34px; }
+
+    .impact-counter {
+      margin-top: 10px;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.01em;
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    .step-card.play .impact-counter.show {
+      opacity: 1;
+      transform: translateY(0);
+      transition: 0.35s ease;
+    }
+
+    .section.out-of-view .step-card.play * {
+      animation-play-state: paused !important;
+    }
+
+    @keyframes connectorPulse {
+      0%, 100% { stroke-width: 4; opacity: 1; }
+      50% { stroke-width: 5; opacity: 0.86; }
+    }
+
+    @keyframes walkIn {
+      from { transform: translateX(-32px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes runIn {
+      from { transform: translateX(-36px) skewX(-5deg); opacity: 0; }
+      to { transform: translateX(0) skewX(0deg); opacity: 1; }
+    }
+
+    @keyframes glowPulse {
+      from { filter: drop-shadow(0 0 0 rgba(245, 166, 35, 0.2)); }
+      to { filter: drop-shadow(0 0 11px rgba(245, 166, 35, 0.9)); }
+    }
+
+    @keyframes phoneTap {
+      0%, 100% { transform: rotate(0deg); }
+      45% { transform: rotate(8deg); }
+      65% { transform: rotate(-5deg); }
+    }
+
+    @keyframes screenBlink {
+      0%, 100% { opacity: 0.36; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes ngoBounce {
+      0% { transform: translateY(16px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes bellShake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-18deg); }
+      50% { transform: rotate(10deg); }
+      75% { transform: rotate(-8deg); }
+    }
+
+    @keyframes checkPop {
+      0% { opacity: 0; transform: scale(0.2); }
+      70% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes boxFlash {
+      0% { filter: drop-shadow(0 0 0 rgba(245, 166, 35, 0)); }
+      50% { filter: drop-shadow(0 0 12px rgba(245, 166, 35, 0.95)); }
+      100% { filter: drop-shadow(0 0 0 rgba(245, 166, 35, 0)); }
+    }
+
+    @keyframes pinDrop {
+      from { transform: translateY(-22px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes pinPulse {
+      0% { transform: scale(1); opacity: 0.9; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+
+    @keyframes pathDraw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes bagBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes bowlTilt {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-4deg); }
+    }
+
+    @keyframes fadeMember {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes foodGlow {
+      from { filter: drop-shadow(0 0 0 rgba(245, 166, 35, 0.2)); }
+      to { filter: drop-shadow(0 0 12px rgba(245, 166, 35, 0.95)); }
+    }
+
+    @keyframes floatHeart {
+      0% { opacity: 0; transform: translateY(0) scale(0.8); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-46px) scale(1.08); }
+    }
+
+    @keyframes confettiBurst {
+      0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
+      25% { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.9); }
+    }
+
+    @media (max-width: 1080px) {
+      .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .desktop-connectors {
+        display: none;
+      }
+
+      .mobile-connector {
+        display: block;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .section {
+        padding: 76px 16px;
+      }
+
+      .step-card {
+        min-height: unset;
+      }
+
+      .heading {
+        margin-bottom: 44px;
+      }
+
+      .dot.d1 { top: 56px; left: 22px; }
+      .dot.d2 { top: 78px; left: 44px; }
+      .dot.d3 { top: 62px; right: 28px; }
+      .dot.d4 { bottom: 56px; left: 18px; }
+      .dot.d5 { bottom: 42px; right: 26px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="section out-of-view" id="how-it-works">
+    <div class="world-map" aria-hidden="true"></div>
+    <span class="dot orange d1" aria-hidden="true"></span>
+    <span class="dot green d2" aria-hidden="true"></span>
+    <span class="dot orange d3" aria-hidden="true"></span>
+    <span class="dot green d4" aria-hidden="true"></span>
+    <span class="dot orange d5" aria-hidden="true"></span>
+
+    <div class="container">
+      <p class="label">HOW IT WORKS</p>
+      <h2 class="heading">A Rescue in 4 Simple Steps</h2>
+
+      <div class="flow-shell">
+        <div class="desktop-connectors" aria-hidden="true">
+          <svg viewBox="0 0 1200 140" preserveAspectRatio="none">
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#2DBD6E"></polygon>
+              </marker>
+            </defs>
+            <path class="connector-path" data-connector="0" d="M180 80 C240 28 300 28 360 80"></path>
+            <path class="connector-path" data-connector="1" d="M480 80 C540 28 600 28 660 80"></path>
+            <path class="connector-path" data-connector="2" d="M780 80 C840 28 900 28 960 80"></path>
+          </svg>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-wrap" data-step="0">
+            <article class="step-card" id="step-1">
+              <div class="step-badge">1</div>
+              <div class="silhouette-zone">
+                <svg viewBox="0 0 140 120" aria-hidden="true">
+                  <g class="step1-main" fill="#1B4332">
+                    <circle cx="52" cy="20" r="10"></circle>
+                    <rect x="44" y="31" width="16" height="30" rx="8"></rect>
+                    <rect x="45" y="37" width="14" height="16" rx="4" fill="#F5A623" opacity="0.82"></rect>
+                    <rect x="30" y="38" width="20" height="8" rx="4" transform="rotate(20 30 38)"></rect>
+                    <rect x="56" y="36" width="22" height="8" rx="4" transform="rotate(-12 56 36)"></rect>
+                    <rect x="43" y="61" width="7" height="26" rx="3"></rect>
+                    <rect x="54" y="61" width="7" height="26" rx="3"></rect>
+                  </g>
+                  <g>
+                    <rect class="step1-tray" x="69" y="42" width="34" height="8" rx="4" fill="#F5A623"></rect>
+                    <rect class="step1-phone" x="18" y="44" width="10" height="18" rx="2" fill="#1B4332"></rect>
+                    <rect class="step1-phone-screen" x="20" y="47" width="6" height="9" rx="1.5" fill="#F5A623"></rect>
+                  </g>
+                </svg>
+              </div>
+              <h3 class="step-title">Donor Lists Food</h3>
+              <div class="accent-icon" aria-hidden="true">📸</div>
+              <p class="step-desc">Snaps a photo or speaks in their language. Done in 30 seconds.</p>
+            </article>
+            <svg class="mobile-connector" data-connector-mobile="0" viewBox="0 0 48 48" aria-hidden="true">
+              <defs>
+                <marker id="arrowhead-mobile-0" markerWidth="8" markerHeight="6" refX="6.5" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#2DBD6E"></polygon>
+                </marker>
+              </defs>
+              <path marker-end="url(#arrowhead-mobile-0)" d="M24 4 C24 16 24 24 24 42"></path>
+            </svg>
+          </div>
+
+          <div class="step-wrap" data-step="1">
+            <article class="step-card" id="step-2">
+              <div class="step-badge">2</div>
+              <div class="silhouette-zone">
+                <svg viewBox="0 0 140 120" aria-hidden="true">
+                  <g class="step2-main" fill="#1B4332">
+                    <circle cx="53" cy="20" r="10"></circle>
+                    <rect x="45" y="30" width="16" height="30" rx="8"></rect>
+                    <rect x="30" y="37" width="20" height="8" rx="4"></rect>
+                    <rect x="58" y="37" width="20" height="8" rx="4"></rect>
+                    <rect x="44" y="60" width="7" height="24" rx="3"></rect>
+                    <rect x="55" y="60" width="7" height="24" rx="3"></rect>
+                  </g>
+                  <g>
+                    <rect class="step2-box" x="74" y="45" width="28" height="20" rx="3" fill="#F5A623"></rect>
+                    <circle class="step2-bell" cx="104" cy="14" r="5" fill="#F5A623"></circle>
+                    <path class="step2-check" d="M93 82 C93 76 97 72 103 72 C109 72 113 76 113 82 C113 88 109 92 103 92 C97 92 93 88 93 82 Z" fill="#2DBD6E" opacity="0"></path>
+                    <path class="step2-check" d="M98 82 L102 86 L108 78" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0"></path>
+                  </g>
+                </svg>
+              </div>
+              <h3 class="step-title">NGO Gets Matched</h3>
+              <div class="accent-icon" aria-hidden="true">🎯</div>
+              <p class="step-desc">Gemini AI finds the best NGO instantly. One tap to accept.</p>
+            </article>
+            <svg class="mobile-connector" data-connector-mobile="1" viewBox="0 0 48 48" aria-hidden="true">
+              <defs>
+                <marker id="arrowhead-mobile-1" markerWidth="8" markerHeight="6" refX="6.5" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#2DBD6E"></polygon>
+                </marker>
+              </defs>
+              <path marker-end="url(#arrowhead-mobile-1)" d="M24 4 C24 16 24 24 24 42"></path>
+            </svg>
+          </div>
+
+          <div class="step-wrap" data-step="2">
+            <article class="step-card" id="step-3">
+              <div class="step-badge">3</div>
+              <div class="silhouette-zone">
+                <svg viewBox="0 0 140 120" aria-hidden="true">
+                  <g class="step3-main" fill="#1B4332">
+                    <circle cx="52" cy="20" r="10"></circle>
+                    <rect x="44" y="30" width="16" height="28" rx="8" transform="skewX(-7)"></rect>
+                    <rect x="34" y="37" width="20" height="8" rx="4" transform="rotate(28 34 37)"></rect>
+                    <rect x="57" y="36" width="22" height="8" rx="4" transform="rotate(-28 57 36)"></rect>
+                    <rect x="39" y="58" width="7" height="25" rx="3" transform="rotate(-20 39 58)"></rect>
+                    <rect x="57" y="58" width="7" height="25" rx="3" transform="rotate(18 57 58)"></rect>
+                  </g>
+                  <rect class="step3-bag" x="63" y="42" width="20" height="24" rx="4" fill="#1B4332"></rect>
+                  <rect class="step3-bag" x="66" y="46" width="14" height="7" rx="3" fill="#F5A623"></rect>
+                  <path class="step3-bowl" d="M90 79 Q96 92 112 92 Q128 92 134 79 L90 79 Z" fill="#1B4332"></path>
+                  <rect class="step3-bowl" x="95" y="92" width="34" height="3" rx="1.5" fill="#1B4332"></rect>
+                  <path class="step3-path" d="M18 88 C38 84 58 86 78 84" stroke="#2DBD6E" stroke-width="2.5" stroke-dasharray="3 4" fill="none"></path>
+                  <path class="step3-pin" d="M106 18 C100 18 96 22 96 28 C96 34 106 46 106 46 C106 46 116 34 116 28 C116 22 112 18 106 18 Z" fill="#F5A623" opacity="0"></path>
+                  <circle class="step3-pin" cx="106" cy="28" r="3" fill="#1B4332" opacity="0"></circle>
+                  <circle class="step3-pin-pulse" cx="106" cy="36" r="6" fill="rgba(245,166,35,0.5)" opacity="0"></circle>
+                </svg>
+              </div>
+              <h3 class="step-title">Volunteer Picks Up</h3>
+              <div class="accent-icon" aria-hidden="true">🗺️</div>
+              <p class="step-desc">Nearest volunteer gets GPS-routed to the donor location.</p>
+            </article>
+            <svg class="mobile-connector" data-connector-mobile="2" viewBox="0 0 48 48" aria-hidden="true">
+              <defs>
+                <marker id="arrowhead-mobile-2" markerWidth="8" markerHeight="6" refX="6.5" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#2DBD6E"></polygon>
+                </marker>
+              </defs>
+              <path marker-end="url(#arrowhead-mobile-2)" d="M24 4 C24 16 24 24 24 42"></path>
+            </svg>
+          </div>
+
+          <div class="step-wrap" data-step="3">
+            <article class="step-card" id="step-4">
+              <div class="step-badge">4</div>
+              <div class="silhouette-zone">
+                <svg viewBox="0 0 140 120" aria-hidden="true">
+                  <g class="member member-1" fill="#1B4332">
+                    <circle cx="36" cy="30" r="9"></circle>
+                    <rect x="28" y="39" width="16" height="24" rx="8"></rect>
+                    <rect x="26" y="62" width="7" height="20" rx="3"></rect>
+                    <rect x="39" y="62" width="7" height="20" rx="3"></rect>
+                  </g>
+                  <g class="member member-2" fill="#1B4332">
+                    <circle cx="70" cy="27" r="10"></circle>
+                    <rect x="62" y="38" width="16" height="26" rx="8"></rect>
+                    <rect x="61" y="63" width="7" height="21" rx="3"></rect>
+                    <rect x="74" y="63" width="7" height="21" rx="3"></rect>
+                  </g>
+                  <g class="member member-3" fill="#1B4332">
+                    <circle cx="103" cy="31" r="8"></circle>
+                    <rect x="96" y="40" width="14" height="22" rx="7"></rect>
+                    <rect x="95" y="61" width="6" height="18" rx="3"></rect>
+                    <rect x="106" y="61" width="6" height="18" rx="3"></rect>
+                  </g>
+                  <rect class="step4-box" x="26" y="82" width="28" height="13" rx="3" fill="#F5A623"></rect>
+                  <rect class="step4-box" x="56" y="84" width="28" height="13" rx="3" fill="#F5A623"></rect>
+                  <rect class="step4-box" x="86" y="82" width="22" height="13" rx="3" fill="#F5A623"></rect>
+                </svg>
+
+                <div class="hearts" aria-hidden="true">
+                  <span class="heart h1">❤</span>
+                  <span class="heart h2">❤</span>
+                  <span class="heart h3">❤</span>
+                </div>
+
+                <div class="confetti" aria-hidden="true">
+                  <span class="piece o p1"></span>
+                  <span class="piece g p2"></span>
+                  <span class="piece o p3"></span>
+                  <span class="piece g p4"></span>
+                  <span class="piece o p5"></span>
+                  <span class="piece g p6"></span>
+                </div>
+              </div>
+              <h3 class="step-title">Food Reaches the Needy</h3>
+              <div class="accent-icon" aria-hidden="true">🙏</div>
+              <p class="step-desc">Meals delivered. Impact logged. Lives changed.</p>
+              <div class="impact-counter" id="impact-counter">+0 people fed</div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      const section = document.getElementById('how-it-works');
+      const cards = Array.from(section.querySelectorAll('.step-card'));
+      const desktopConnectors = Array.from(section.querySelectorAll('.connector-path'));
+      const mobileConnectors = Array.from(section.querySelectorAll('.mobile-connector'));
+      const counterEl = document.getElementById('impact-counter');
+      let hasPlayed = false;
+
+      function runCounter() {
+        const end = 45;
+        const duration = 1200;
+        const start = performance.now();
+
+        function tick(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const val = Math.floor(progress * end);
+          counterEl.textContent = `+${val} people fed`;
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            counterEl.textContent = '+45 people fed';
+            counterEl.classList.add('show');
+          }
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      function drawConnector(index) {
+        if (desktopConnectors[index]) {
+          desktopConnectors[index].classList.add('draw');
+        }
+        if (mobileConnectors[index]) {
+          mobileConnectors[index].classList.add('draw');
+        }
+      }
+
+      function playSequence() {
+        if (hasPlayed) return;
+        hasPlayed = true;
+
+        cards.forEach((card, index) => {
+          setTimeout(() => {
+            card.classList.add('visible');
+            setTimeout(() => {
+              card.classList.add('play');
+            }, 130);
+
+            if (index < cards.length - 1) {
+              drawConnector(index);
+            }
+
+            if (index === cards.length - 1) {
+              setTimeout(runCounter, 900);
+            }
+          }, index * 300);
+        });
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            section.classList.remove('out-of-view');
+            playSequence();
+          } else if (hasPlayed) {
+            section.classList.add('out-of-view');
+          }
+        });
+      }, { threshold: 0.25 });
+
+      observer.observe(section);
+    })();
+  </script>
+</body>
+</html>

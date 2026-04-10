@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Heart, LogOut, Menu, X, Zap } from 'lucide-react'
+import { Heart, LogOut, Menu, X, ChevronDown, Phone, Search, User } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import type { UserRole } from '@/lib/types'
@@ -49,52 +49,54 @@ export default function Navbar() {
       className={cn(
         'fixed top-0 inset-x-0 z-50 transition-all duration-300',
         scrolled
-          ? 'bg-white/90 backdrop-blur-md border-b border-gray-200 py-3 shadow-sm'
+          ? 'bg-white/95 backdrop-blur-md py-3 shadow-sm'
           : 'bg-transparent py-5',
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center shadow-lg shadow-slate-500/20">
+          <div className="w-9 h-9 rounded-full bg-rq-amber flex items-center justify-center shadow-lg shadow-amber-300/60">
             <Heart className="w-4 h-4 text-white" fill="white" />
           </div>
-          <span className="font-bold text-lg text-gray-900 tracking-tight">
-            Gemini<span className="text-slate-700">Grain</span>
-          </span>
+          <div>
+            <div className="font-serif font-bold text-lg leading-tight text-rq-text">GeminiGrain</div>
+            <div className="text-[11px] uppercase tracking-[0.18em] text-rq-subtle">Share More. Waste Less.</div>
+          </div>
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-7">
+          {[
+            { label: 'Home', href: '/' },
+            { label: 'About', href: '/#about' },
+            { label: 'Rescues', href: '/#rescues' },
+            { label: 'Volunteer', href: '/#volunteer' },
+          ].map((item) => (
+            <Link key={item.label} href={item.href} className="text-sm text-rq-text hover:text-rq-amber transition-colors font-medium inline-flex items-center gap-1">
+              {item.label}
+              <ChevronDown className="w-3.5 h-3.5 text-rq-subtle" />
+            </Link>
+          ))}
           {role && (
-            <>
-              <Link
-                href={roleHome[role]}
-                 className="text-sm text-gray-800 hover:text-slate-900 transition-colors font-medium"
-              >
-                Dashboard
-              </Link>
-              {role === 'donor' && (
-                <Link
-                  href="/donor/submit"
-                   className="text-sm text-gray-800 hover:text-slate-900 transition-colors font-medium"
-                >
-                  Donate Food
-                </Link>
-              )}
-              <Link
-                href="/live"
-                 className="text-sm text-gray-800 hover:text-slate-900 transition-colors flex items-center gap-1 font-medium"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-600 animate-pulse" />
-                Live Feed
-              </Link>
-            </>
+            <Link href={roleHome[role]} className="text-sm text-rq-text hover:text-rq-amber font-semibold transition-colors">
+              Dashboard
+            </Link>
           )}
         </div>
 
         {/* Right side */}
         <div className="hidden md:flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-1.5 text-sm text-rq-muted font-medium">
+            <Phone className="w-4 h-4 text-rq-amber" />
+            +91 98765 43210
+          </div>
+          <button className="w-9 h-9 rounded-full bg-white/90 text-rq-text shadow-sm flex items-center justify-center hover:text-rq-amber transition-colors" aria-label="Search">
+            <Search className="w-4 h-4" />
+          </button>
+          <button className="w-9 h-9 rounded-full bg-white/90 text-rq-text shadow-sm flex items-center justify-center hover:text-rq-amber transition-colors" aria-label="Profile">
+            <User className="w-4 h-4" />
+          </button>
           {role ? (
             <>
               <span className={cn('text-xs px-2.5 py-1 rounded-full border font-medium', roleColor[role])}>
@@ -102,7 +104,7 @@ export default function Navbar() {
               </span>
               <button
                 onClick={signOut}
-                 className="flex items-center gap-1.5 text-sm text-gray-800 hover:text-red-600 transition-colors font-medium"
+                className="flex items-center gap-1.5 text-sm text-rq-text hover:text-red-600 transition-colors font-medium"
               >
                 <LogOut className="w-4 h-4" />
                 Sign out
@@ -112,16 +114,15 @@ export default function Navbar() {
             <>
               <Link
                 href="/auth"
-                 className="text-sm text-gray-800 hover:text-slate-900 transition-colors font-medium"
+                className="text-sm text-rq-text hover:text-rq-amber transition-colors font-medium"
               >
                 Sign in
               </Link>
               <Link
                 href="/auth"
-                className="flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white transition-colors shadow-lg shadow-slate-500/20"
+                className="pill-btn flex items-center gap-1.5 text-sm px-5 py-2.5 bg-rq-amber hover:bg-rq-amber-dim text-white transition-colors shadow-lg shadow-amber-200/70"
               >
-                <Zap className="w-3.5 h-3.5" />
-                Get Started
+                Donate Now
               </Link>
             </>
           )}
@@ -129,7 +130,7 @@ export default function Navbar() {
 
         {/* Mobile menu toggle */}
         <button
-           className="md:hidden text-gray-800 p-1"
+          className="md:hidden text-rq-text p-1"
           onClick={() => setOpen(!open)}
         >
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -138,20 +139,24 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-white border-t border-gray-200 px-4 py-4 flex flex-col gap-3">
+        <div className="md:hidden bg-white px-4 py-5 flex flex-col gap-3 shadow-lg">
+          <Link href="/" className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Home</Link>
+          <Link href="/#about" className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>About</Link>
+          <Link href="/#rescues" className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Rescues</Link>
+          <Link href="/#volunteer" className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Volunteer</Link>
           {role ? (
             <>
-              <Link href={roleHome[role]} className="text-sm text-gray-900 py-2" onClick={() => setOpen(false)}>Dashboard</Link>
+              <Link href={roleHome[role]} className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Dashboard</Link>
               {role === 'donor' && (
-                <Link href="/donor/submit" className="text-sm text-gray-900 py-2" onClick={() => setOpen(false)}>Donate Food</Link>
+                <Link href="/donor/submit" className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Donate Food</Link>
               )}
-              <Link href="/live" className="text-sm text-gray-900 py-2" onClick={() => setOpen(false)}>Live Feed</Link>
+              <Link href="/live" className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Live Feed</Link>
               <button onClick={signOut} className="text-sm text-red-600 text-left py-2">Sign out</button>
             </>
           ) : (
             <>
-              <Link href="/auth" className="text-sm text-gray-900 py-2" onClick={() => setOpen(false)}>Sign in</Link>
-              <Link href="/auth" className="text-sm text-slate-900 font-medium py-2" onClick={() => setOpen(false)}>Get Started</Link>
+              <Link href="/auth" className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Sign in</Link>
+              <Link href="/auth" className="pill-btn text-center text-sm text-white bg-rq-amber font-semibold py-2.5" onClick={() => setOpen(false)}>Donate Now</Link>
             </>
           )}
         </div>

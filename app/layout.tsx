@@ -1,22 +1,23 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
-import { Sora, JetBrains_Mono } from 'next/font/google'
+import { Playfair_Display, Inter, JetBrains_Mono } from 'next/font/google'
 
-const sora = Sora({ subsets: ['latin'], variable: '--font-geist-sans' })
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif-display' })
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans-body' })
 const jetMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
 export const metadata: Metadata = {
-  title: 'GeminiGrain — Rescue Surplus Food with AI',
+  title: 'GeminiGrain — Every Meal Saved Matters',
   description:
-    'GeminiGrain is an AI-powered food rescue platform connecting surplus food donors with NGOs in real-time using Google Gemini API.',
-  keywords: 'GeminiGrain, food rescue, AI, Gemini, NGO, food waste, sustainability',
+    'GeminiGrain is a social impact platform connecting donors, NGOs, and volunteers to rescue safe surplus food and serve communities with dignity.',
+  keywords: 'GeminiGrain, food donation, NGO, volunteer, social impact, food rescue',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${sora.variable} ${jetMono.variable} bg-rq-bg text-rq-text antialiased min-h-screen`}>
+      <body className={`${playfair.variable} ${inter.variable} ${jetMono.variable} bg-rq-bg text-rq-text antialiased min-h-screen`}>
         {children}
         <Toaster
           position="top-right"

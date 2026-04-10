@@ -36,7 +36,7 @@ export async function PATCH(
     if (body.volunteerId)   updates.volunteerId   = body.volunteerId
 
     if (body.status === 'IN_TRANSIT') updates.matchedAt   = new Date()
-    if (body.status === 'DELIVERED')  updates.deliveredAt = new Date()
+    if (body.status === 'COMPLETED')  updates.deliveredAt = new Date()
 
     const updated = updateDonation(id, updates)
     if (!updated) {
