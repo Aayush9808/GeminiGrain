@@ -12,6 +12,11 @@ import {
 } from 'lucide-react'
 import { useAuth, getRoleDashboard } from '@/lib/auth-context'
 import type { UserRole, DonorSubtype } from '@/lib/auth/types'
+import DemoButton, { type DemoVariant } from '@/components/DemoButton'
+import {
+  DEMO_INDIVIDUAL_DONOR, DEMO_ORG_DONOR,
+  DEMO_VOLUNTEER, DEMO_NGO, DEMO_OTP,
+} from '@/lib/demo-data'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -112,6 +117,37 @@ export default function RegisterPage() {
     setForm(f => ({ ...f, [k]: v }))
     setErrors(e => ({ ...e, [k]: undefined }))
   }
+
+  // ── Demo fill ──────────────────────────────────────────────────────────────
+
+  function applyDemo(preset: typeof DEMO_INDIVIDUAL_DONOR | typeof DEMO_ORG_DONOR | typeof DEMO_VOLUNTEER | typeof DEMO_NGO) {
+    setErrors({})
+    if (preset.role === 'donor') {
+      const sub = (preset as typeof DEMO_INDIVIDUAL_DONOR | typeof DEMO_ORG_DONOR).subtype
+      if (sub === 'individual') {
+        const d = preset as typeof DEMO_INDIVIDUAL_DONOR
+        setForm({ ...INITIAL, role: 'donor', subtype: 'individual', phone: d.phone, email: d.email, name: d.name, address: d.address, docType: d.docType, docValue: d.docValue, otp: DEMO_OTP, demoOtp: DEMO_OTP })
+      } else {
+        const d = preset as typeof DEMO_ORG_DONOR
+        setForm({ ...INITIAL, role: 'donor', subtype: 'organization', phone: d.phone, email: d.email, organizationName: d.organizationName, ownerName: d.ownerName, address: d.address, docType: d.docType, docValue: d.docValue, otp: DEMO_OTP, demoOtp: DEMO_OTP })
+      }
+    } else if (preset.role === 'volunteer') {
+      const d = preset as typeof DEMO_VOLUNTEER
+      setForm({ ...INITIAL, role: 'volunteer', phone: d.phone, email: d.email, name: d.name, address: d.address, docType: d.docType, docValue: d.docValue, otp: DEMO_OTP, demoOtp: DEMO_OTP })
+    } else {
+      const d = preset as typeof DEMO_NGO
+      setForm({ ...INITIAL, role: 'ngo', phone: d.phone, email: d.email, ngoName: d.ngoName, contactPerson: d.contactPerson, address: d.address, estimatedVolunteers: d.estimatedVolunteers, docType: d.docType, docValue: d.docValue, otp: DEMO_OTP, demoOtp: DEMO_OTP })
+    }
+    setStep('role')
+    toast.success('Demo data loaded! Click Continue on each step.')
+  }
+
+  const demoVariants: DemoVariant[] = [
+    { label: 'Individual Donor',   onFill: () => applyDemo(DEMO_INDIVIDUAL_DONOR) },
+    { label: 'Organization Donor', onFill: () => applyDemo(DEMO_ORG_DONOR) },
+    { label: 'Volunteer',          onFill: () => applyDemo(DEMO_VOLUNTEER) },
+    { label: 'NGO / Charity',      onFill: () => applyDemo(DEMO_NGO) },
+  ]
 
   function addError(k: keyof FormState, msg: string) {
     setErrors(e => ({ ...e, [k]: msg }))
@@ -314,6 +350,9 @@ export default function RegisterPage() {
           <span className="font-serif text-2xl font-bold text-rq-text">GeminiGrain</span>
         </div>
         <p className="text-rq-muted text-sm">Create your account — it takes under 2 minutes</p>
+        <div className="mt-3 flex justify-center">
+          <DemoButton label="Use Demo Credentials" variants={demoVariants} />
+        </div>
       </div>
 
       {/* Progress Steps */}

@@ -46,7 +46,15 @@ export type VerifyOTPResult =
   | { ok: true }
   | { ok: false; message: string; expired?: true; tooManyAttempts?: true }
 
+const DEMO_OTP_CODE = '123456'
+
 export function verifyOTP(phoneNumber: string, otp: string): VerifyOTPResult {
+  // Demo bypass — always accepts 123456 without needing a prior sendOTP call
+  if (otp === DEMO_OTP_CODE) {
+    otpStore.delete(phoneNumber)
+    return { ok: true }
+  }
+
   const record = otpStore.get(phoneNumber)
 
   if (!record) {

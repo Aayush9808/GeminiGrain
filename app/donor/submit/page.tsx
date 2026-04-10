@@ -11,6 +11,8 @@ import {
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import Navbar from '@/components/Navbar'
+import DemoButton, { type DemoVariant } from '@/components/DemoButton'
+import { DEMO_FOOD_INPUTS } from '@/lib/demo-data'
 import { urgencyColor, urgencyBg, cn } from '@/lib/utils'
 import type { GeminiAnalysis, UrgencyLevel } from '@/lib/types'
 
@@ -194,6 +196,17 @@ export default function SubmitFood() {
     setAnalysis(null)
   }
 
+  const demoVariants: DemoVariant[] = DEMO_FOOD_INPUTS.map(d => ({
+    label:  d.label,
+    onFill: () => {
+      setText(d.text)
+      setLocation(d.location)
+      setTab('text')
+      setStage('input')
+      toast.success(`Demo loaded: "${d.label}" — click Analyze to continue.`)
+    },
+  }))
+
   return (
     <div className="min-h-screen bg-mesh">
       <Navbar />
@@ -210,10 +223,15 @@ export default function SubmitFood() {
           {stage === 'input' && (
             <motion.div key="input" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
               <div className="mb-7">
-                <h1 className="text-2xl font-bold text-slate-900">Donate Surplus Food</h1>
-                <p className="text-rq-muted text-sm mt-1.5">
-                  Describe your food in any language — Gemini handles the rest.
-                </p>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Donate Surplus Food</h1>
+                    <p className="text-rq-muted text-sm mt-1.5">
+                      Describe your food in any language — Gemini handles the rest.
+                    </p>
+                  </div>
+                  <DemoButton label="Demo" variants={demoVariants} className="flex-shrink-0 mt-1" />
+                </div>
               </div>
 
               {/* Input tabs */}

@@ -9,6 +9,8 @@ import {
 } from 'lucide-react'
 import { useAuth, getRoleDashboard } from '@/lib/auth-context'
 import type { UserRole } from '@/lib/auth/types'
+import DemoButton from '@/components/DemoButton'
+import { DEMO_LOGIN } from '@/lib/demo-data'
 
 type Phase = 'phone' | 'otp'
 
@@ -96,6 +98,32 @@ export default function LoginPage() {
     await handleSendOTP()
   }
 
+  function applyDemoCredentials() {
+    setPhone(DEMO_LOGIN.phone)
+    setOtp(DEMO_LOGIN.otp)
+    setDemoOtp(DEMO_LOGIN.otp)
+    setError('')
+    setLoading(true)
+    // Auto-register demo user if they don't exist yet, then skip to OTP step
+    fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phoneNumber: DEMO_LOGIN.phone,
+        role: 'donor',
+        subtype: 'individual',
+        details: { name: 'Demo User', email: 'demo@geminigrain.app', address: 'Demo City, India' }
+      }),
+    })
+      .then(() => {/* ignore duplicate 409 — user may already exist */})
+      .catch(() => {/* network error fine in demo */})
+      .finally(() => {
+        setLoading(false)
+        toast.success('Demo credentials loaded! Click Verify & Sign In.')
+        setPhase('otp')
+      })
+  }
+
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'Enter') {
       if (phase === 'phone') handleSendOTP()
@@ -116,6 +144,9 @@ export default function LoginPage() {
           <span className="font-serif text-2xl font-bold text-rq-text">GeminiGrain</span>
         </div>
         <p className="text-rq-muted text-sm">Sign in to your account</p>
+        <div className="mt-3">
+          <DemoButton onFill={applyDemoCredentials} label="Use Demo Credentials" />
+        </div>
       </div>
 
       {/* Card */}
