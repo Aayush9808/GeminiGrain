@@ -8,7 +8,7 @@
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import type { Donation } from '@/lib/types'
-import { DEMO_COORDS } from './DonationMap'
+import { DEMO_COORDS } from '@/lib/mapConstants'
 
 const DonationMap = dynamic(() => import('./DonationMap'), {
   ssr: false,
