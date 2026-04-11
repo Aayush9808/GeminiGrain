@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   UtensilsCrossed,
@@ -73,20 +73,31 @@ const GEMINI_PILLS = [
 const CYCLE = 7000   // ms per full cycle
 const STEP_MS = 900  // delay between step activations
 
-// ── Particle ──────────────────────────────────────────────────────────────────
-function Particle({ delay }: { delay: number }) {
+// ── Pre-computed particles (stable, no hydration mismatch) ───────────────────
+const PARTICLES = [
+  { w: 6, h: 6, hue: 45, top: 15, left: 20, delay: 0 },
+  { w: 4, h: 4, hue: 60, top: 70, left: 35, delay: 0.6 },
+  { w: 7, h: 7, hue: 30, top: 40, left: 75, delay: 1.2 },
+  { w: 5, h: 5, hue: 50, top: 85, left: 55, delay: 0.3 },
+  { w: 4, h: 4, hue: 70, top: 25, left: 88, delay: 1.8 },
+  { w: 6, h: 6, hue: 40, top: 60, left: 12, delay: 0.9 },
+  { w: 3, h: 3, hue: 55, top: 10, left: 50, delay: 2.1 },
+  { w: 5, h: 5, hue: 35, top: 75, left: 82, delay: 1.5 },
+]
+
+function Particle({ p }: { p: typeof PARTICLES[0] }) {
   return (
     <motion.div
       className="absolute rounded-full pointer-events-none"
       style={{
-        width: Math.random() * 5 + 3,
-        height: Math.random() * 5 + 3,
-        background: `hsl(${Math.random() * 60 + 30}, 80%, 65%)`,
-        top: `${Math.random() * 80 + 10}%`,
-        left: `${Math.random() * 80 + 10}%`,
+        width: p.w,
+        height: p.h,
+        background: `hsl(${p.hue}, 80%, 65%)`,
+        top: `${p.top}%`,
+        left: `${p.left}%`,
       }}
-      animate={{ opacity: [0, 0.7, 0], scale: [0.5, 1.4, 0.5], y: [-8, 8, -8] }}
-      transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay }}
+      animate={{ opacity: [0, 0.6, 0], scale: [0.5, 1.4, 0.5], y: [-8, 8, -8] }}
+      transition={{ duration: 4, repeat: Infinity, delay: p.delay }}
     />
   )
 }
@@ -111,23 +122,25 @@ function Connector({ active }: { active: boolean }) {
 export default function FlowAnimation() {
   const [activeStep, setActiveStep] = useState(-1)
   const [cycle, setCycle] = useState(0)
+  const mountedRef = useRef(true)
 
   useEffect(() => {
-    let timeouts: ReturnType<typeof setTimeout>[] = []
+    mountedRef.current = true
+    return () => { mountedRef.current = false }
+  }, [])
 
-    const run = () => {
-      setActiveStep(-1)
-      STEPS.forEach((_, i) => {
-        const t = setTimeout(() => setActiveStep(i), 300 + i * STEP_MS)
-        timeouts.push(t)
-      })
-      const reset = setTimeout(() => {
-        setCycle(c => c + 1)
-      }, CYCLE)
-      timeouts.push(reset)
+  useEffect(() => {
+    const timeouts: ReturnType<typeof setTimeout>[] = []
+
+    const safe = (fn: () => void, ms: number) => {
+      const t = setTimeout(() => { if (mountedRef.current) fn() }, ms)
+      timeouts.push(t)
     }
 
-    run()
+    safe(() => setActiveStep(-1), 0)
+    STEPS.forEach((_, i) => safe(() => setActiveStep(i), 300 + i * STEP_MS))
+    safe(() => setCycle(c => c + 1), CYCLE)
+
     return () => timeouts.forEach(clearTimeout)
   }, [cycle])
 
@@ -135,8 +148,8 @@ export default function FlowAnimation() {
     <div className="relative w-full select-none">
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <Particle key={i} delay={i * 0.4} />
+        {PARTICLES.map((p, i) => (
+          <Particle key={i} p={p} />
         ))}
       </div>
 
