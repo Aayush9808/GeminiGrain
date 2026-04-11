@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import HowItWorks from '@/components/HowItWorks'
+import FlowAnimation from '@/components/FlowAnimation'
 
 const features = [
   {
@@ -138,15 +139,7 @@ export default function LandingPage() {
               </div>
 
               <div className="relative flex justify-center lg:justify-end">
-                <div className="absolute -left-10 top-8 w-7 h-7 rounded-full bg-rq-blue/20" />
-                <div className="absolute right-8 bottom-8 w-10 h-10 rounded-full bg-rq-green/20" />
-                <div className="relative w-[360px] h-[360px] sm:w-[430px] sm:h-[430px] rounded-[47%] overflow-hidden shadow-2xl border-[10px] border-white/90">
-                  <img
-                    src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1200&q=80"
-                    alt="Community food support"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <FlowAnimation />
               </div>
             </div>
           </div>
