@@ -6,7 +6,7 @@ import toast          from 'react-hot-toast'
 import {
   Phone, ShieldCheck,
   Loader2, ChevronRight, AlertCircle, Zap,
-  UtensilsCrossed, Building2, Bike, Check,
+  UtensilsCrossed, Building2, Bike, Check, ArrowLeft,
 } from 'lucide-react'
 import { useAuth, getRoleDashboard } from '@/lib/auth-context'
 import type { UserRole } from '@/lib/auth/types'
@@ -135,26 +135,89 @@ export default function LoginPage() {
   // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-rq-bg flex flex-col items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex bg-white">
 
-      {/* Logo + Home link */}
-      <div className="mb-6 text-center">
-        <a href="/" className="inline-flex items-center gap-1.5 text-xs text-rq-muted hover:text-rq-text mb-3 transition-colors">
-          <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+      {/* ── LEFT PANEL — desktop only ─────────────────────────────────────── */}
+      <div className="hidden lg:flex w-[46%] flex-col justify-between bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100/60 px-12 py-10 relative overflow-hidden">
+        {/* Decorative blobs */}
+        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-rq-amber/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-orange-200/25 blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/3 w-48 h-48 rounded-full bg-amber-300/10 blur-2xl pointer-events-none" />
+
+        {/* Back to Home */}
+        <a href="/" className="relative z-10 inline-flex items-center gap-2 text-sm text-amber-800/70 hover:text-amber-900 transition-all group w-fit">
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
           Back to Home
         </a>
-        <div className="flex justify-center mb-4">
-          <a href="/" className="inline-block transition-opacity hover:opacity-80">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="GeminiGrain Logo" style={{ width: '260px', height: 'auto' }} />
+
+        {/* Branding block */}
+        <div className="relative z-10 flex flex-col gap-8">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="GeminiGrain" style={{ width: '190px', height: 'auto' }} />
+
+          <div>
+            <h1 className="text-[36px] leading-[1.18] font-bold text-rq-text max-w-xs">
+              Every meal saved is a life changed.
+            </h1>
+            <p className="mt-4 text-[14px] text-amber-900/65 leading-relaxed max-w-[280px]">
+              Join donors, NGOs, and volunteers rescuing surplus food across India — powered by AI.
+            </p>
+          </div>
+
+          {/* Feature bullets */}
+          <ul className="space-y-3">
+            {([
+              { icon: UtensilsCrossed, text: 'Donate surplus food in seconds' },
+              { icon: ShieldCheck,     text: 'AI-powered food safety verification' },
+              { icon: Building2,       text: 'Instant smart NGO matching' },
+            ] as const).map(({ icon: Icon, text }) => (
+              <li key={text} className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-rq-amber/15 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-4 h-4 text-rq-amber" />
+                </div>
+                <span className="text-[13px] font-medium text-amber-900/80">{text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Trust badges */}
+        <div className="relative z-10 flex flex-wrap items-center gap-2">
+          {[
+            { dot: 'bg-green-500',    label: 'AI Verified'      },
+            { dot: 'bg-blue-500',     label: '4 NGOs Connected' },
+            { dot: 'bg-rq-amber',     label: 'Gemini Powered'   },
+          ].map(({ dot, label }) => (
+            <span key={label} className="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-white/70 border border-amber-200 rounded-full px-3 py-1.5">
+              <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
+              {label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── RIGHT PANEL ──────────────────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 bg-rq-bg relative">
+
+        {/* Mobile: Back to Home */}
+        <div className="lg:hidden absolute top-5 left-5">
+          <a href="/" className="inline-flex items-center gap-1.5 text-xs text-rq-muted hover:text-rq-text transition-colors group">
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+            Back to Home
           </a>
         </div>
-        <p className="text-rq-muted text-sm">Sign in to your account</p>
-      </div>
+
+        {/* Mobile: Logo */}
+        <div className="lg:hidden mb-8 text-center">
+          <a href="/" className="inline-block transition-opacity hover:opacity-80">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="GeminiGrain Logo" style={{ width: '200px', height: 'auto' }} />
+          </a>
+        </div>
 
       {/* ── Demo Role Panel (phone screen only) ───────────────────────────── */}
       {phase === 'phone' && (
-        <div className="w-full max-w-sm mb-5">
+        <div className="w-full max-w-[420px] mb-5">
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
             <div className="flex items-center gap-2 mb-1">
               <Zap className="w-4 h-4 text-amber-600" />
@@ -195,7 +258,7 @@ export default function LoginPage() {
       )}
 
       {/* ── Auth Card ─────────────────────────────────────────────────────── */}
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl border border-rq-border p-8 animate-fade-in">
+      <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-xl border border-rq-border p-8 animate-fade-in">
 
         {/* ── Phone Step ──────────────────────────────────────────────────── */}
         {phase === 'phone' ? (
@@ -347,7 +410,8 @@ export default function LoginPage() {
           Don&apos;t have an account?{' '}
           <a href="/register" className="text-rq-amber hover:underline font-semibold">Register</a>
         </p>
-      </div>
-    </div>
+      </div>{/* /auth card */}
+      </div>{/* /right panel */}
+    </div>{/* /root flex */}
   )
 }
