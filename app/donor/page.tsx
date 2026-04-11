@@ -8,6 +8,7 @@ import { Plus, Leaf, Users, Clock, CheckCircle, Zap, ShieldAlert } from 'lucide-
 import toast from 'react-hot-toast'
 import Navbar from '@/components/Navbar'
 import DonationCard from '@/components/DonationCard'
+import MapView from '@/components/MapView'
 import type { Donation, ImpactStats } from '@/lib/types'
 
 export default function DonorDashboard() {
@@ -44,20 +45,20 @@ export default function DonorDashboard() {
     const n    = localStorage.getItem('rq_name')
     
     if (role !== 'donor') { 
-      router.push('/auth')
+      router.push('/login')
       return 
     }
     
     // Check if user has completed profile
     if (!user) {
-      router.push('/auth')
+      router.push('/login')
       return
     }
     
     try {
       const userData = JSON.parse(user)
       if (!userData.verified) {
-        router.push('/auth')
+        router.push('/login')
         return
       }
       setVerified(true)
@@ -69,7 +70,7 @@ export default function DonorDashboard() {
         sessionStorage.setItem('rq_donor_instructions_seen', 'true')
       }
     } catch {
-      router.push('/auth')
+      router.push('/login')
       return
     }
     
@@ -156,6 +157,11 @@ export default function DonorDashboard() {
               <div className="text-xs text-rq-muted mt-1">{s.label}</div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Map */}
+        <div className="mb-8">
+          <MapView viewAs="donor" />
         </div>
 
         {/* Donations list */}

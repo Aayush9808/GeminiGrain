@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { addDonation, getDonationById, updateDonation } from './store'
-import type { Donation, DonationStatus, GeminiAnalysis } from './types'
+import type { Donation, DonationStatus, GeminiAnalysis, ImageValidationResult, RankedNGO } from './types'
 
 export interface DonationSubmissionInput {
   donorId: string
@@ -10,6 +10,13 @@ export interface DonationSubmissionInput {
   dishName?: string
   quantity?: string
   analysis?: GeminiAnalysis
+  // Enhanced fields
+  imagePath?:          string
+  imageValidation?:    ImageValidationResult
+  preparedMinutesAgo?: number
+  consentGiven?:       boolean
+  riskFlag?:           string
+  geminiRankedNGOs?:   RankedNGO[]
 }
 
 export interface DashboardFoodItem {
@@ -69,6 +76,13 @@ export function buildDonationFromSubmission(input: DonationSubmissionInput): Don
     detectedLanguage: input.analysis?.detectedLanguage ?? 'English',
     createdAt: now,
     geminiAnalysis: input.analysis,
+    // Enhanced fields
+    imagePath:          input.imagePath,
+    imageValidation:    input.imageValidation,
+    preparedMinutesAgo: input.preparedMinutesAgo,
+    consentGiven:       input.consentGiven ?? false,
+    riskFlag:           input.riskFlag,
+    geminiRankedNGOs:   input.geminiRankedNGOs,
   }
 }
 

@@ -83,6 +83,11 @@ export default function Navbar() {
               Dashboard
             </Link>
           )}
+          {role && (
+            <Link href="/support" className="text-sm text-rq-text hover:text-rq-amber font-medium transition-colors">
+              Support
+            </Link>
+          )}
         </div>
 
         {/* Right side */}
@@ -147,6 +152,7 @@ export default function Navbar() {
           {role ? (
             <>
               <Link href={getRoleDashboard(role)} className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Dashboard</Link>
+              <Link href="/support" className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Support</Link>
               {role === 'donor' && (
                 <Link href="/donor/submit" className="text-sm text-rq-text py-2" onClick={() => setOpen(false)}>Donate Food</Link>
               )}

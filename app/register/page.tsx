@@ -329,7 +329,11 @@ export default function RegisterPage() {
     } else if (step === 'otp') {
       await handleVerifyOTP()
     } else if (step === 'document') {
-      if (!form.docVerified) { toast.error('Please verify your identity first.'); return }
+      // If user presses Enter / Continue while doc is unverified, auto-trigger verification
+      if (!form.docVerified) {
+        await handleVerifyDocument()
+        return
+      }
       if (needsUpload(form.role, form.subtype)) setStep('upload')
       else await handleRegister()
     } else if (step === 'upload') {
@@ -345,9 +349,15 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-rq-bg flex flex-col items-center justify-center px-4 py-12">
       {/* Header */}
       <div className="mb-8 text-center">
-        <div className="inline-flex items-center gap-2 mb-3">
-          <Heart className="w-6 h-6 text-rq-amber" fill="#F5A623" />
-          <span className="font-serif text-2xl font-bold text-rq-text">GeminiGrain</span>
+        <a href="/" className="inline-flex items-center gap-1.5 text-xs text-rq-muted hover:text-rq-text mb-3 transition-colors">
+          <ChevronLeft className="w-3.5 h-3.5" />
+          Back to Home
+        </a>
+        <div className="flex justify-center">
+          <div className="inline-flex items-center gap-2 mb-3">
+            <Heart className="w-6 h-6 text-rq-amber" fill="#F5A623" />
+            <span className="font-serif text-2xl font-bold text-rq-text">GeminiGrain</span>
+          </div>
         </div>
         <p className="text-rq-muted text-sm">Create your account — it takes under 2 minutes</p>
         <div className="mt-3 flex justify-center">
@@ -381,7 +391,11 @@ export default function RegisterPage() {
       </div>
 
       {/* Card */}
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-rq-border p-8 animate-fade-in">
+      <form
+        onSubmit={e => { e.preventDefault(); handleContinue() }}
+        noValidate
+        className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-rq-border p-8 animate-fade-in"
+      >
 
         {/* ── Step 1: Role ───────────────────────────────────────────────── */}
         {step === 'role' && (
@@ -396,6 +410,7 @@ export default function RegisterPage() {
                 { role: 'ngo',       icon: Building2,  label: 'NGO / Charity',  desc: 'Receive food donations for beneficiaries you serve.' },
               ].map(({ role, icon: Icon, label, desc }) => (
                 <button
+                  type="button"
                   key={role}
                   onClick={() => updateField('role', role as UserRole)}
                   className={`flex items-start gap-4 p-4 rounded-xl border-2 text-left transition-all ${
@@ -426,6 +441,7 @@ export default function RegisterPage() {
                     { sub: 'organization', icon: Building2, label: 'Organization',  desc: 'Restaurant, hotel, event' },
                   ].map(({ sub, icon: Icon, label, desc }) => (
                     <button
+                      type="button"
                       key={sub}
                       onClick={() => updateField('subtype', sub as DonorSubtype)}
                       className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 text-center transition-all ${
@@ -536,6 +552,7 @@ export default function RegisterPage() {
               <input
                 type="text" inputMode="numeric" pattern="[0-9]*"
                 maxLength={6} value={form.otp}
+                autoFocus
                 onChange={e => updateField('otp', e.target.value.replace(/\D/g, ''))}
                 placeholder="• • • • • •"
                 className={`${inputCls(errors.otp)} text-center tracking-[0.5em] text-xl font-mono`}
@@ -543,6 +560,7 @@ export default function RegisterPage() {
             </Field>
 
             <button
+              type="button"
               onClick={() => handleSendOTP()}
               className="mt-2 text-sm text-rq-amber hover:underline"
             >
@@ -564,7 +582,7 @@ export default function RegisterPage() {
 
             <div className="flex gap-3 mb-4">
               {(['aadhaar', 'pan'] as const).map(t => (
-                <button key={t} onClick={() => { updateField('docType', t); updateField('docVerified', false); updateField('docValue', '') }}
+                <button type="button" key={t} onClick={() => { updateField('docType', t); updateField('docVerified', false); updateField('docValue', '') }}
                   className={`flex-1 py-2 rounded-lg border-2 text-sm font-semibold transition-all ${
                     form.docType === t ? 'border-rq-amber bg-amber-50 text-rq-amber' : 'border-rq-border text-rq-muted hover:border-rq-border-hi'
                   }`}>
@@ -588,7 +606,7 @@ export default function RegisterPage() {
                     className={inputCls(errors.docValue)}
                   />
                 </Field>
-                <button onClick={handleVerifyDocument} disabled={loading}
+                <button type="button" onClick={handleVerifyDocument} disabled={loading}
                   className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 bg-rq-green text-white rounded-xl font-semibold text-sm hover:bg-rq-green-dim transition-colors disabled:opacity-50">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                   Verify (Demo)
@@ -625,7 +643,7 @@ export default function RegisterPage() {
               <>
                 <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png"
                   onChange={handleFileUpload} className="hidden" />
-                <button onClick={() => fileRef.current?.click()} disabled={loading}
+                <button type="button" onClick={() => fileRef.current?.click()} disabled={loading}
                   className="w-full border-2 border-dashed border-rq-border rounded-xl py-10 flex flex-col items-center gap-3 hover:border-rq-amber hover:bg-amber-50/30 transition-all disabled:opacity-50">
                   {loading
                     ? <Loader2 className="w-8 h-8 text-rq-amber animate-spin" />
@@ -643,7 +661,7 @@ export default function RegisterPage() {
                   <p className="text-green-700 text-xs truncate mt-0.5">{form.uploadedUrl}</p>
                 </div>
                 <button onClick={() => updateField('uploadedUrl', '')}
-                  className="ml-auto text-xs text-rq-muted hover:text-red-500">
+                  className="ml-auto text-xs text-rq-muted hover:text-red-500" type="button">
                   Replace
                 </button>
               </div>
@@ -674,27 +692,28 @@ export default function RegisterPage() {
         {step !== 'success' && (
           <div className={`mt-8 flex gap-3 ${stepIdx === 0 ? 'justify-end' : 'justify-between'}`}>
             {stepIdx > 0 && (
-              <button onClick={goBack} disabled={loading}
+              <button type="button" onClick={goBack} disabled={loading}
                 className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-rq-border text-rq-muted text-sm font-semibold hover:border-rq-border-hi transition-colors">
                 <ChevronLeft className="w-4 h-4" /> Back
               </button>
             )}
-            {/* Document step has its own verify button; skip the default Continue only when unverified */}
-            {!(step === 'document' && !form.docVerified) && (
-              <button onClick={handleContinue} disabled={loading}
+            {/* Document step: show the submit button that triggers either verify or continue */}
+            {step !== 'document' && (
+              <button type="submit" disabled={loading}
                 className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-rq-amber text-white text-sm font-semibold hover:bg-rq-amber-dim transition-colors disabled:opacity-50">
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                {step === 'document' ? 'Continue' :
-                 step === 'upload'   ? (form.uploadedUrl ? 'Complete Registration' : 'Skip & Register') :
+                {step === 'upload'   ? (form.uploadedUrl ? 'Complete Registration' : 'Skip & Register') :
                  step === 'details'  ? 'Send OTP' :
                  step === 'otp'      ? 'Verify OTP' : 'Continue'}
                 {!loading && <ChevronRight className="w-4 h-4" />}
               </button>
             )}
-            {step === 'document' && form.docVerified && (
-              <button onClick={handleContinue} disabled={loading}
-                className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-rq-amber text-white text-sm font-semibold hover:bg-rq-amber-dim transition-colors">
-                Continue <ChevronRight className="w-4 h-4" />
+            {step === 'document' && (
+              <button type="submit" disabled={loading}
+                className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-rq-amber text-white text-sm font-semibold hover:bg-rq-amber-dim transition-colors disabled:opacity-50">
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {form.docVerified ? 'Continue' : 'Verify ID'}
+                {!loading && <ChevronRight className="w-4 h-4" />}
               </button>
             )}
           </div>
@@ -706,7 +725,7 @@ export default function RegisterPage() {
             <a href="/login" className="text-rq-amber hover:underline font-semibold">Sign in</a>
           </p>
         )}
-      </div>
+      </form>
     </div>
   )
 }

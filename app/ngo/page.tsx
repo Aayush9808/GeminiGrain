@@ -7,6 +7,8 @@ import { Building2, CheckCircle, Clock, Users, Zap, RefreshCw, Loader2, FlaskCon
 import toast from 'react-hot-toast'
 import Navbar from '@/components/Navbar'
 import DonationCard from '@/components/DonationCard'
+import MapView from '@/components/MapView'
+import ComplaintModal from '@/components/ComplaintModal'
 import type { Donation } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
@@ -27,6 +29,8 @@ export default function NGODashboard() {
   const [loading,    setLoading]    = useState(true)
   const [accepting,  setAccepting]  = useState<string | null>(null)
   const [verified,   setVerified]   = useState(false)
+  const [complaintTarget, setComplaintTarget] = useState<Donation | null>(null)
+  const [ngoId, setNgoId] = useState('')
 
   useEffect(() => {
     const role = localStorage.getItem('rq_role')
@@ -34,25 +38,26 @@ export default function NGODashboard() {
     const name = localStorage.getItem('rq_name')
     
     if (role !== 'ngo') { 
-      router.push('/auth')
+      router.push('/login')
       return 
     }
     
     // Check if user has completed profile
     if (!user) {
-      router.push('/auth')
+      router.push('/login')
       return
     }
     
     try {
       const userData = JSON.parse(user)
       if (!userData.verified) {
-        router.push('/auth')
+        router.push('/login')
         return
       }
       setVerified(true)
+      if (userData.id) setNgoId(userData.id)
     } catch {
-      router.push('/auth')
+      router.push('/login')
       return
     }
     
@@ -194,6 +199,18 @@ export default function NGODashboard() {
       <Navbar />
 
       <main className="max-w-4xl mx-auto px-4 pt-28 pb-16">
+        {/* Complaint modal */}
+        {complaintTarget && (
+          <ComplaintModal
+            donationId={complaintTarget.id}
+            donationName={complaintTarget.foodName}
+            ngoId={ngoId}
+            ngoName={ngoName}
+            onClose={() => setComplaintTarget(null)}
+            onSubmitted={() => setComplaintTarget(null)}
+          />
+        )}
+
         {/* Header */}
         <div className="flex items-start justify-between mb-8 gap-3">
           <div>
@@ -241,6 +258,11 @@ export default function NGODashboard() {
           ))}
         </div>
 
+        {/* Map */}
+        <div className="mb-6">
+          <MapView viewAs="ngo" donations={donations} />
+        </div>
+
         {/* Filter tabs */}
         <div className="flex gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 mb-6 overflow-x-auto">
           {FILTER_TABS.map(({ id, label }) => (
@@ -284,6 +306,10 @@ export default function NGODashboard() {
                     viewAs="ngo"
                     onAccept={acceptDonation}
                     accepting={accepting}
+                    onComplaint={(id) => {
+                      const d = donations.find(x => x.id === id)
+                      if (d) setComplaintTarget(d)
+                    }}
                   />
                   {donation.status === 'ACCEPTED_BY_NGO' && (
                     <button

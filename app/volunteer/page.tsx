@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 import Navbar from '@/components/Navbar'
 import DonationCard from '@/components/DonationCard'
 import FoodSafetyCertificate from '@/components/FoodSafetyCertificate'
+import MapView from '@/components/MapView'
 import type { Donation, FoodSafetyCertificate as FoodSafetyCertificateData } from '@/lib/types'
 
 export default function VolunteerDashboard() {
@@ -25,23 +26,23 @@ export default function VolunteerDashboard() {
     const name = localStorage.getItem('rq_name')
 
     if (role !== 'volunteer') {
-      router.push('/auth')
+      router.push('/login')
       return
     }
 
     if (!user) {
-      router.push('/auth')
+      router.push('/login')
       return
     }
 
     try {
       const userData = JSON.parse(user)
       if (!userData.verified) {
-        router.push('/auth')
+        router.push('/login')
         return
       }
     } catch {
-      router.push('/auth')
+      router.push('/login')
       return
     }
 
@@ -195,6 +196,13 @@ export default function VolunteerDashboard() {
             </div>
             <FoodSafetyCertificate data={certificate.data} rescue={certificate.rescue} />
           </section>
+        )}
+
+        {/* Map — show route when there's an active in-transit delivery */}
+        {!loading && (
+          <div className="mb-8">
+            <MapView viewAs="volunteer" />
+          </div>
         )}
 
         {loading ? (

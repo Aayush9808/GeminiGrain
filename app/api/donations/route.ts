@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAllDonations } from '@/lib/store'
 import { createDonation, scheduleDonationFlow, toDashboardFoodItem } from '@/lib/donation-service'
-import type { GeminiAnalysis } from '@/lib/types'
+import type { GeminiAnalysis, ImageValidationResult } from '@/lib/types'
 
 // ─── GET /api/donations ───────────────────────────────────────────────────────
 
@@ -35,9 +35,16 @@ export async function POST(req: NextRequest) {
       quantity?: string
       autoProgress?: boolean
       analysis: GeminiAnalysis
+      // Enhanced fields
+      imagePath?:          string
+      imageValidation?:    ImageValidationResult
+      preparedMinutesAgo?: number
+      consentGiven?:       boolean
+      riskFlag?:           string
     }
 
-    const { donorId, donorName, location, rawInput, analysis, dishName, quantity, autoProgress } = body
+    const { donorId, donorName, location, rawInput, analysis, dishName, quantity, autoProgress,
+            imagePath, imageValidation, preparedMinutesAgo, consentGiven, riskFlag } = body
 
     if (!donorId || !donorName || (!analysis && !dishName)) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 })
@@ -51,6 +58,11 @@ export async function POST(req: NextRequest) {
       dishName,
       quantity,
       analysis,
+      imagePath,
+      imageValidation,
+      preparedMinutesAgo,
+      consentGiven,
+      riskFlag,
     })
 
     if (autoProgress !== false) {

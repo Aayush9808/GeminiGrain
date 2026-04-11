@@ -83,6 +83,27 @@ export interface Donation {
   deliveredAt?: Date
   geminiAnalysis?: GeminiAnalysis
   certificate?: FoodSafetyCertificate
+
+  // ── Enhanced fields ─────────────────────────────────────────
+  imagePath?:        string                // public URL of uploaded food photo
+  imageValidation?:  ImageValidationResult // Gemini Vision result
+  preparedMinutesAgo?: number             // donor-provided time since food was made
+  consentGiven?:     boolean              // donor confirmed safety consent
+  riskFlag?:         string               // shown to NGO if WARNING/REJECT
+  geminiRankedNGOs?: RankedNGO[]          // Gemini-ranked NGO candidates
+}
+
+/** Result of Gemini Vision scanning the donor's food photo */
+export interface ImageValidationResult {
+  result:     'GOOD' | 'WARNING' | 'REJECT'
+  reason:     string
+  confidence: number   // 0–100
+}
+
+/** NGO ranked by Gemini decision engine */
+export interface RankedNGO extends NGOProfile {
+  geminiReason: string  // why Gemini chose this NGO
+  rank:         number  // 1 = best
 }
 
 export interface GeminiAnalysis {

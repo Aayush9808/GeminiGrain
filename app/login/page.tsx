@@ -128,13 +128,6 @@ export default function LoginPage() {
     setPhase('phone')
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') {
-      if (phase === 'phone') handleSendOTP()
-      else                   handleVerifyOTP()
-    }
-  }
-
   const isDemoPhone = Object.values(DEMO_PHONES).includes(phone.replace(/\s/g, ''))
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -144,11 +137,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-rq-bg flex flex-col items-center justify-center px-4 py-12">
 
-      {/* Logo */}
+      {/* Logo + Home link */}
       <div className="mb-6 text-center">
-        <div className="inline-flex items-center gap-2 mb-2">
-          <Heart className="w-6 h-6 text-rq-amber" fill="#F5A623" />
-          <span className="font-serif text-2xl font-bold text-rq-text">GeminiGrain</span>
+        <a href="/" className="inline-flex items-center gap-1.5 text-xs text-rq-muted hover:text-rq-text mb-3 transition-colors">
+          <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+          Back to Home
+        </a>
+        <div className="flex justify-center">
+          <div className="inline-flex items-center gap-2 mb-2">
+            <Heart className="w-6 h-6 text-rq-amber" fill="#F5A623" />
+            <span className="font-serif text-2xl font-bold text-rq-text">GeminiGrain</span>
+          </div>
         </div>
         <p className="text-rq-muted text-sm">Sign in to your account</p>
       </div>
@@ -200,7 +199,7 @@ export default function LoginPage() {
 
         {/* ── Phone Step ──────────────────────────────────────────────────── */}
         {phase === 'phone' ? (
-          <>
+          <form onSubmit={e => { e.preventDefault(); handleSendOTP() }} noValidate>
             <div className="w-14 h-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center mb-5">
               <Phone className="w-7 h-7 text-rq-amber" />
             </div>
@@ -219,12 +218,12 @@ export default function LoginPage() {
               <input
                 type="tel" inputMode="numeric" maxLength={10}
                 value={phone}
+                autoFocus
                 onChange={e => {
                   setPhone(e.target.value.replace(/\D/g, ''))
                   setError('')
                   if (selectedRole) setSelectedRole(null)
                 }}
-                onKeyDown={handleKeyDown}
                 placeholder="98765 43210"
                 className={`flex-1 px-4 py-2.5 rounded-r-xl border text-sm text-rq-text placeholder-rq-subtle focus:outline-none focus:ring-2 transition-all ${
                   error ? 'border-red-400 bg-red-50 focus:ring-red-200' : 'border-rq-border bg-rq-surface2 focus:border-rq-amber focus:ring-amber-100'
@@ -251,18 +250,18 @@ export default function LoginPage() {
             )}
 
             <button
-              onClick={handleSendOTP}
+              type="submit"
               disabled={loading}
               className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-rq-amber text-white rounded-xl font-semibold hover:bg-rq-amber-dim transition-colors disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ChevronRight className="w-4 h-4" />}
               {loading ? 'Sending OTP…' : 'Send OTP'}
             </button>
-          </>
+          </form>
 
         ) : (
           /* ── OTP Step ───────────────────────────────────────────────────── */
-          <>
+          <form onSubmit={e => { e.preventDefault(); handleVerifyOTP() }} noValidate>
             <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-5 transition-colors duration-300 ${
               otpVerifying ? 'bg-green-50 border border-green-300' : 'bg-green-50 border border-green-200'
             }`}>
@@ -283,6 +282,7 @@ export default function LoginPage() {
             {/* Use Demo OTP button — shown when it's a demo number */}
             {isDemoPhone && !otpVerifying && (
               <button
+                type="button"
                 onClick={useDemoOtp}
                 disabled={loading}
                 className="w-full mb-4 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 text-amber-900 font-semibold text-sm transition-all disabled:opacity-50"
@@ -305,8 +305,8 @@ export default function LoginPage() {
             <input
               type="text" inputMode="numeric" maxLength={6}
               value={otp}
+              autoFocus
               onChange={e => { setOtp(e.target.value.replace(/\D/g, '')); setError('') }}
-              onKeyDown={handleKeyDown}
               disabled={otpVerifying}
               placeholder="• • • • • •"
               className={`w-full px-4 py-3 rounded-xl border text-center text-xl font-mono tracking-[0.5em] focus:outline-none focus:ring-2 transition-all disabled:opacity-60 ${
@@ -320,7 +320,7 @@ export default function LoginPage() {
             )}
 
             <button
-              onClick={handleVerifyOTP}
+              type="submit"
               disabled={loading || otpVerifying}
               className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-rq-amber text-white rounded-xl font-semibold hover:bg-rq-amber-dim transition-colors disabled:opacity-50"
             >
@@ -330,16 +330,17 @@ export default function LoginPage() {
 
             <div className="mt-4 flex items-center justify-between text-sm">
               <button
+                type="button"
                 onClick={() => { setPhase('phone'); setOtp(''); setDemoOtp(''); setOtpVerifying(false) }}
                 className="text-rq-muted hover:text-rq-text"
               >
                 ← Change number
               </button>
-              <button onClick={handleResend} className="text-rq-amber hover:underline">
+              <button type="button" onClick={handleResend} className="text-rq-amber hover:underline">
                 Resend OTP
               </button>
             </div>
-          </>
+          </form>
         )}
 
         <p className="mt-6 text-center text-sm text-rq-muted">
