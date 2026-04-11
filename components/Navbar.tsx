@@ -60,9 +60,9 @@ export default function Navbar() {
           <Image
             src="/logo.png"
             alt="GeminiGrain Logo"
-            width={140}
-            height={36}
-            className="h-9 w-auto object-contain"
+            width={160}
+            height={48}
+            className="h-12 w-auto object-contain"
             priority
           />
         </Link>

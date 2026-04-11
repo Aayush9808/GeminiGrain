@@ -117,10 +117,7 @@ export default function LandingPage() {
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
-                <a href="/" className="inline-block mb-4 transition-opacity hover:opacity-80">
-                  <img src="/logo.png" alt="GeminiGrain" className="h-12 w-auto object-contain" />
-                </a>
-                <h1 className="mt-2 text-[44px] sm:text-[58px] lg:text-[68px] leading-[1.03] font-bold text-rq-text max-w-xl">
+                <h1 className="text-[44px] sm:text-[58px] lg:text-[68px] leading-[1.03] font-bold text-rq-text max-w-xl">
                   Every meal
                   <br />
                   saved is a

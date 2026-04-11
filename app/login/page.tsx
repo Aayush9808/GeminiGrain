@@ -143,9 +143,9 @@ export default function LoginPage() {
           <ChevronRight className="w-3.5 h-3.5 rotate-180" />
           Back to Home
         </a>
-        <div className="flex justify-center mb-2">
+        <div className="flex justify-center mb-3">
           <a href="/" className="inline-block transition-opacity hover:opacity-80">
-            <img src="/logo.png" alt="GeminiGrain Logo" className="h-10 w-auto object-contain" />
+            <img src="/logo.png" alt="GeminiGrain Logo" style={{width: '180px', height: 'auto'}} className="object-contain" />
           </a>
         </div>
         <p className="text-rq-muted text-sm">Sign in to your account</p>

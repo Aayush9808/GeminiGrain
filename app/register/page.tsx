@@ -355,7 +355,7 @@ export default function RegisterPage() {
         </a>
         <div className="flex justify-center mb-3">
           <a href="/" className="inline-block transition-opacity hover:opacity-80">
-            <img src="/logo.png" alt="GeminiGrain Logo" className="h-10 w-auto object-contain" />
+            <img src="/logo.png" alt="GeminiGrain Logo" style={{width: '180px', height: 'auto'}} className="object-contain" />
           </a>
         </div>
         <p className="text-rq-muted text-sm">Create your account — it takes under 2 minutes</p>
