@@ -145,7 +145,7 @@ export default function LoginPage() {
         </a>
         <div className="flex justify-center mb-3">
           <a href="/" className="inline-block transition-opacity hover:opacity-80">
-            <img src="/logo.png" alt="GeminiGrain Logo" style={{width: '180px', height: 'auto'}} className="object-contain" />
+            <img src="/logo.png" alt="GeminiGrain Logo" style={{width: '220px', height: 'auto'}} className="object-contain" />
           </a>
         </div>
         <p className="text-rq-muted text-sm">Sign in to your account</p>

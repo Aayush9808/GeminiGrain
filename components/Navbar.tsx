@@ -56,13 +56,13 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group transition-opacity hover:opacity-80">
+        <Link href="/" className="flex items-center group transition-opacity hover:opacity-80">
           <Image
             src="/logo.png"
             alt="GeminiGrain Logo"
-            width={160}
-            height={48}
-            className="h-12 w-auto object-contain"
+            width={220}
+            height={120}
+            className="h-14 md:h-16 w-auto object-contain"
             priority
           />
         </Link>
