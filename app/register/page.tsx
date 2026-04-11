@@ -353,9 +353,10 @@ export default function RegisterPage() {
           <ChevronLeft className="w-3.5 h-3.5" />
           Back to Home
         </a>
-        <div className="flex justify-center mb-3">
+        <div className="flex justify-center mb-4">
           <a href="/" className="inline-block transition-opacity hover:opacity-80">
-            <img src="/logo.png" alt="GeminiGrain Logo" style={{width: '220px', height: 'auto'}} className="object-contain" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="GeminiGrain Logo" style={{ width: '260px', height: 'auto' }} />
           </a>
         </div>
         <p className="text-rq-muted text-sm">Create your account — it takes under 2 minutes</p>

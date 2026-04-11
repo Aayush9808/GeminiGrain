@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { LogOut, Menu, X, ChevronDown, Phone, Search, User } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -50,20 +49,18 @@ export default function Navbar() {
       className={cn(
         'fixed top-0 inset-x-0 z-50 transition-all duration-300',
         scrolled
-          ? 'bg-white/95 backdrop-blur-md py-3 shadow-sm'
-          : 'bg-transparent py-5',
+          ? 'bg-white/95 backdrop-blur-md py-2 shadow-sm'
+          : 'bg-transparent py-3',
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center group transition-opacity hover:opacity-80">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src="/logo.png"
             alt="GeminiGrain Logo"
-            width={220}
-            height={120}
-            className="h-14 md:h-16 w-auto object-contain"
-            priority
+            style={{ height: '72px', width: 'auto' }}
           />
         </Link>
 
