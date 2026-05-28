@@ -12,7 +12,7 @@
 
 <br/>
 
-[![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-resqfood--delta.vercel.app-16A34A?style=for-the-badge)](https://resqfood-delta.vercel.app)
+[![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-resqfood--delta.vercel.app-16A34A?style=for-the-badge)](https://geminigrain.vercel.app)
 [![Hackathon](https://img.shields.io/badge/HackDays%202026-GCET%20×%20HackBase%20×%20MLH-0A66C2?style=for-the-badge)](https://hackdays.in)
 [![Track](https://img.shields.io/badge/Track-Best%20Use%20of%20Gemini%20API-4285F4?style=for-the-badge&logo=google)](https://ai.google.dev)
 [![Next.js](https://img.shields.io/badge/Next.js%2016-TypeScript-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org)
